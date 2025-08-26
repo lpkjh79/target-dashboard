@@ -1,0 +1,4025 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부동산 타겟 분석 - 울산광역시 전체 2025-08-26</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            padding-bottom: 60px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .summary-item {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .summary-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .route-info {
+            background: white;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .route-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .route-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .route-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+        }
+        
+        .apartment-card {
+            background: white;
+            margin: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .apartment-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .order-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.3);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .apartment-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .apartment-info {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+        
+        .map-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #03C75A;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 15px 0;
+        }
+        
+        .office-list {
+            padding: 15px;
+        }
+        
+        .office-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            position: relative;
+        }
+        
+        .office-item:last-child {
+            border-bottom: none;
+        }
+        
+        .office-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .office-checkbox {
+            position: absolute;
+            top: 15px;
+            right: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .office-checkbox input {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .office-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .office-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .office-phone {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .distance-info {
+            background: #f0f0f0;
+            padding: 10px 15px;
+            margin: 0 15px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+        
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #e0e0e0;
+            margin: 15px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .apartment-name {
+                font-size: 18px;
+            }
+            
+            .office-details {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 다크 모드 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1a1a1a;
+                color: #fff;
+            }
+            
+            .apartment-card, .route-info {
+                background: #2a2a2a;
+            }
+            
+            .office-name, .route-title {
+                color: #fff;
+            }
+            
+            .office-item {
+                border-color: #444;
+            }
+            
+            .distance-info {
+                background: #333;
+                color: #aaa;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 부동산 타겟 분석</h1>
+        <div style="opacity: 0.9; font-size: 14px;">울산광역시 전체 | 2025-08-26</div>
+        <div class="summary">
+            <div class="summary-item">
+                <div class="summary-value">35</div>
+                <div class="summary-label">아파트</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value">181</div>
+                <div class="summary-label">사무소</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value">1000</div>
+                <div class="summary-label">최소세대</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value">2023+</div>
+                <div class="summary-label">등록년도</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="route-info">
+        <div class="route-header">
+            <div class="route-title">🚗 최적 이동 경로</div>
+        </div>
+        <div class="route-stats">
+            <div class="route-stat">
+                📍 <span>총 거리: 0km</span>
+            </div>
+            <div class="route-stat">
+                ⏱️ <span>예상 시간: 계산중</span>
+            </div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div id="progressStatus" style="text-align: center; margin-top: 5px; font-size: 12px; color: #666;"></div>
+    </div>
+    
+    
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">1</div>
+                    <div class="apartment-name">현대패밀리서부</div>
+                    <div class="apartment-info">
+                        <span>🏠 3027.0세대</span>
+                        <span>🎯 3개 사무소</span>
+                        <span>📊 상위20% 평균: 168.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%ED%98%84%EB%8C%80%ED%8C%A8%EB%B0%80%EB%A6%AC%EC%84%9C%EB%B6%80?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">자이탑부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_1_1" class="office-visit-checkbox">
+                        <label for="office_1_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.26km</div>
+                        <div>🏢 매물 37건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1055 신영울산지웰시티자이2단...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">코코자이부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_1_2" class="office-visit-checkbox">
+                        <label for="office_1_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.29km</div>
+                        <div>🏢 매물 80건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 서부동 1049 신영울산지웰시티자이1단지상...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">서부자이단지내공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_1_3" class="office-visit-checkbox">
+                        <label for="office_1_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.3km</div>
+                        <div>🏢 매물 168건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1049 신영 울산 지웰시티 자...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_1" class="visit-checkbox">
+                    <label for="visit_1">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">2</div>
+                    <div class="apartment-name">번영로센트리지</div>
+                    <div class="apartment-info">
+                        <span>🏠 2625.0세대</span>
+                        <span>🎯 10개 사무소</span>
+                        <span>📊 상위20% 평균: 50.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EB%B2%88%EC%98%81%EB%A1%9C%EC%84%BC%ED%8A%B8%EB%A6%AC%EC%A7%80?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">올라가공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_1" class="office-visit-checkbox">
+                        <label for="office_2_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.0km</div>
+                        <div>🏢 매물 51건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 중구 복산동 460-72 5-2단지 B101...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">친절한부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_2" class="office-visit-checkbox">
+                        <label for="office_2_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.0km</div>
+                        <div>🏢 매물 13건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 복산동 460-72 5단지 1상가 105호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">탑센트리지공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_3" class="office-visit-checkbox">
+                        <label for="office_2_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.0km</div>
+                        <div>🏢 매물 44건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 중구 복산동 460-72 2단지 107호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">번영센트리지공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_4" class="office-visit-checkbox">
+                        <label for="office_2_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.08km</div>
+                        <div>🏢 매물 42건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 중구 복산동 460-72 번영로센트리지 3단...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">행복한센트리지공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_5" class="office-visit-checkbox">
+                        <label for="office_2_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.26km</div>
+                        <div>🏢 매물 16건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 학산동 95-1</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">캐슬부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_6" class="office-visit-checkbox">
+                        <label for="office_2_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.31km</div>
+                        <div>🏢 매물 21건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 학산동 108 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">알파고부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_7" class="office-visit-checkbox">
+                        <label for="office_2_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.35km</div>
+                        <div>🏢 매물 48건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 중구 복산동 460-72 번영로 센트리지2단...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">뉴캐슬부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_8" class="office-visit-checkbox">
+                        <label for="office_2_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.45km</div>
+                        <div>🏢 매물 38건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 옥교동 161-12 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">현대아이파크부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_9" class="office-visit-checkbox">
+                        <label for="office_2_9">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.49km</div>
+                        <div>🏢 매물 49건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 복산동 776 복산아이파크 상가 118동 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">서한이다음공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_2_10" class="office-visit-checkbox">
+                        <label for="office_2_10">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.74km</div>
+                        <div>🏢 매물 43건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 복산동 779 번영로 서한 이다음 1단지 ...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_2" class="visit-checkbox">
+                    <label for="visit_2">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">3</div>
+                    <div class="apartment-name">롯데캐슬골드</div>
+                    <div class="apartment-info">
+                        <span>🏠 2421.0세대</span>
+                        <span>🎯 5개 사무소</span>
+                        <span>📊 상위20% 평균: 63.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EB%A1%AF%EB%8D%B0%EC%BA%90%EC%8A%AC%EA%B3%A8%EB%93%9C?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">한아름부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_3_1" class="office-visit-checkbox">
+                        <label for="office_3_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.18km</div>
+                        <div>🏢 매물 4건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 881 롯데캐슬2단지아파트 일반상가...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">라엘에스행복한365부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_3_2" class="office-visit-checkbox">
+                        <label for="office_3_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.42km</div>
+                        <div>🏢 매물 35건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 936-58 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">위드부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_3_3" class="office-visit-checkbox">
+                        <label for="office_3_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.78km</div>
+                        <div>🏢 매물 32건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 912 대현더샵2단지 상가 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵정직한부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_3_4" class="office-visit-checkbox">
+                        <label for="office_3_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.95km</div>
+                        <div>🏢 매물 43건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 시티프라디움 근생3동 106...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵메인부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_3_5" class="office-visit-checkbox">
+                        <label for="office_3_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.97km</div>
+                        <div>🏢 매물 63건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 대현시티프라디움 근생3동 1...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_3" class="visit-checkbox">
+                    <label for="visit_3">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">4</div>
+                    <div class="apartment-name">현대패밀리동부</div>
+                    <div class="apartment-info">
+                        <span>🏠 2110.0세대</span>
+                        <span>🎯 2개 사무소</span>
+                        <span>📊 상위20% 평균: 30.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%ED%98%84%EB%8C%80%ED%8C%A8%EB%B0%80%EB%A6%AC%EB%8F%99%EB%B6%80?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">친절한공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_4_1" class="office-visit-checkbox">
+                        <label for="office_4_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.16km</div>
+                        <div>🏢 매물 30건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 동부동 327-8</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">늘푸른공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_4_2" class="office-visit-checkbox">
+                        <label for="office_4_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.63km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 서부동 333-4</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_4" class="visit-checkbox">
+                    <label for="visit_4">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">5</div>
+                    <div class="apartment-name">라엘에스</div>
+                    <div class="apartment-info">
+                        <span>🏠 2033.0세대</span>
+                        <span>🎯 4개 사무소</span>
+                        <span>📊 상위20% 평균: 90.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EB%9D%BC%EC%97%98%EC%97%90%EC%8A%A4?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">라엘에스행복한365부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_5_1" class="office-visit-checkbox">
+                        <label for="office_5_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.14km</div>
+                        <div>🏢 매물 35건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 936-58 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">라엘에스스마일부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_5_2" class="office-visit-checkbox">
+                        <label for="office_5_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.61km</div>
+                        <div>🏢 매물 33건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 800-4 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">웰컴투부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_5_3" class="office-visit-checkbox">
+                        <label for="office_5_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.61km</div>
+                        <div>🏢 매물 90건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 800-4 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">한아름부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_5_4" class="office-visit-checkbox">
+                        <label for="office_5_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.71km</div>
+                        <div>🏢 매물 4건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 881 롯데캐슬2단지아파트 일반상가...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_5" class="visit-checkbox">
+                    <label for="visit_5">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">6</div>
+                    <div class="apartment-name">힐스테이트이스턴베이</div>
+                    <div class="apartment-info">
+                        <span>🏠 1897.0세대</span>
+                        <span>🎯 7개 사무소</span>
+                        <span>📊 상위20% 평균: 113.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%ED%9E%90%EC%8A%A4%ED%85%8C%EC%9D%B4%ED%8A%B8%EC%9D%B4%EC%8A%A4%ED%84%B4%EB%B2%A0%EC%9D%B4?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">예영공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_6_1" class="office-visit-checkbox">
+                        <label for="office_6_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.29km</div>
+                        <div>🏢 매물 64건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 화정동 654-29 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">시향공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_6_2" class="office-visit-checkbox">
+                        <label for="office_6_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.48km</div>
+                        <div>🏢 매물 20건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 화정동 851-6 대하크리스탈 상가동 10...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">이솔공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_6_3" class="office-visit-checkbox">
+                        <label for="office_6_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.48km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 방어동 924-17</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">이솔공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_6_4" class="office-visit-checkbox">
+                        <label for="office_6_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.48km</div>
+                        <div>🏢 매물 28건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 방어동 924-17</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">정석공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_6_5" class="office-visit-checkbox">
+                        <label for="office_6_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.69km</div>
+                        <div>🏢 매물 113건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 일산동 581-11 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">프런티어공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_6_6" class="office-visit-checkbox">
+                        <label for="office_6_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.77km</div>
+                        <div>🏢 매물 2건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 방어동 58-2 대왕암CGV블루스퀘어 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">88 공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_6_7" class="office-visit-checkbox">
+                        <label for="office_6_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.79km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 방어동 376-10 센트럴상가 102호</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_6" class="visit-checkbox">
+                    <label for="visit_6">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">7</div>
+                    <div class="apartment-name">서부성원상떼빌</div>
+                    <div class="apartment-info">
+                        <span>🏠 1810.0세대</span>
+                        <span>🎯 4개 사무소</span>
+                        <span>📊 상위20% 평균: 168.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%84%9C%EB%B6%80%EC%84%B1%EC%9B%90%EC%83%81%EB%96%BC%EB%B9%8C?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">코코자이부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_7_1" class="office-visit-checkbox">
+                        <label for="office_7_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.24km</div>
+                        <div>🏢 매물 80건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 서부동 1049 신영울산지웰시티자이1단지상...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">서부자이단지내공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_7_2" class="office-visit-checkbox">
+                        <label for="office_7_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.25km</div>
+                        <div>🏢 매물 168건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1049 신영 울산 지웰시티 자...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">자이탑부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_7_3" class="office-visit-checkbox">
+                        <label for="office_7_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.3km</div>
+                        <div>🏢 매물 37건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1055 신영울산지웰시티자이2단...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">태화부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_7_4" class="office-visit-checkbox">
+                        <label for="office_7_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.92km</div>
+                        <div>🏢 매물 54건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 299-10  A3타워 106호</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_7" class="visit-checkbox">
+                    <label for="visit_7">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">8</div>
+                    <div class="apartment-name">염포성원상떼빌</div>
+                    <div class="apartment-info">
+                        <span>🏠 1799.0세대</span>
+                        <span>🎯 1개 사무소</span>
+                        <span>📊 상위20% 평균: 0.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%97%BC%ED%8F%AC%EC%84%B1%EC%9B%90%EC%83%81%EB%96%BC%EB%B9%8C?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">염포현대부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_8_1" class="office-visit-checkbox">
+                        <label for="office_8_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.59km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 염포동 141-2 1층</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_8" class="visit-checkbox">
+                    <label for="visit_8">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">9</div>
+                    <div class="apartment-name">양우내안애더퍼스트</div>
+                    <div class="apartment-info">
+                        <span>🏠 1715.0세대</span>
+                        <span>🎯 1개 사무소</span>
+                        <span>📊 상위20% 평균: 0.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%96%91%EC%9A%B0%EB%82%B4%EC%95%88%EC%95%A0%EB%8D%94%ED%8D%BC%EC%8A%A4%ED%8A%B8?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">양우행복공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_9_1" class="office-visit-checkbox">
+                        <label for="office_9_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.14km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 울주군 언양읍 송대리 53-1 양우내안애 더...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_9" class="visit-checkbox">
+                    <label for="visit_9">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">10</div>
+                    <div class="apartment-name">월드메르디앙월드시티(1단지)</div>
+                    <div class="apartment-info">
+                        <span>🏠 1625.0세대</span>
+                        <span>🎯 8개 사무소</span>
+                        <span>📊 상위20% 평균: 176.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%9B%94%EB%93%9C%EB%A9%94%EB%A5%B4%EB%94%94%EC%95%99%EC%9B%94%EB%93%9C%EC%8B%9C%ED%8B%B0%281%EB%8B%A8%EC%A7%80%29?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">월드사랑공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_10_1" class="office-visit-checkbox">
+                        <label for="office_10_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.24km</div>
+                        <div>🏢 매물 31건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 864 월드메르디앙월드시티 128동...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">신세계부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_10_2" class="office-visit-checkbox">
+                        <label for="office_10_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.4km</div>
+                        <div>🏢 매물 14건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 233 상가동 106호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">강남부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_10_3" class="office-visit-checkbox">
+                        <label for="office_10_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.6km</div>
+                        <div>🏢 매물 23건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 895 드림인시티 에일린의뜰 2...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">봄부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_10_4" class="office-visit-checkbox">
+                        <label for="office_10_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.6km</div>
+                        <div>🏢 매물 17건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 895 드림인시티 에일린의뜰 2차 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">정토공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_10_5" class="office-visit-checkbox">
+                        <label for="office_10_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.62km</div>
+                        <div>🏢 매물 101건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 542-29</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">솔루션공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_10_6" class="office-visit-checkbox">
+                        <label for="office_10_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.63km</div>
+                        <div>🏢 매물 22건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 572 현대파크맨션 111동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">에뜰정원부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_10_7" class="office-visit-checkbox">
+                        <label for="office_10_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.75km</div>
+                        <div>🏢 매물 176건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 897 드림인시티에일린의뜰 1차 상...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">Hello에뜰부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_10_8" class="office-visit-checkbox">
+                        <label for="office_10_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.79km</div>
+                        <div>🏢 매물 69건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 896 드림인시티 에일린의뜰 1...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_10" class="visit-checkbox">
+                    <label for="visit_10">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">11</div>
+                    <div class="apartment-name">선경2차</div>
+                    <div class="apartment-info">
+                        <span>🏠 1613.0세대</span>
+                        <span>🎯 13개 사무소</span>
+                        <span>📊 상위20% 평균: 124.5개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%84%A0%EA%B2%BD2%EC%B0%A8?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">태양공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_1" class="office-visit-checkbox">
+                        <label for="office_11_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.16km</div>
+                        <div>🏢 매물 45건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 369-1 선경2차아파트 상가동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">큰대우부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_2" class="office-visit-checkbox">
+                        <label for="office_11_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.29km</div>
+                        <div>🏢 매물 45건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 유곡동 69 상가 122동 105호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">한양립스공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_3" class="office-visit-checkbox">
+                        <label for="office_11_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.32km</div>
+                        <div>🏢 매물 15건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 271-28 101호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">대왕공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_4" class="office-visit-checkbox">
+                        <label for="office_11_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.37km</div>
+                        <div>🏢 매물 22건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 285-25 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">현대I-PARK공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_5" class="office-visit-checkbox">
+                        <label for="office_11_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.42km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 439-4</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">현대I-PARK공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_6" class="office-visit-checkbox">
+                        <label for="office_11_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.42km</div>
+                        <div>🏢 매물 83건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 중구 우정동 439-4</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">믿음부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_7" class="office-visit-checkbox">
+                        <label for="office_11_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.5km</div>
+                        <div>🏢 매물 70건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 215-4 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">마제스부동산중개</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_8" class="office-visit-checkbox">
+                        <label for="office_11_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.6km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 172 마제스타워울산 105동 20...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">위드공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_9" class="office-visit-checkbox">
+                        <label for="office_11_9">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.6km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 512-5 106호(우정동,혁신타워...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">위드공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_11_10" class="office-visit-checkbox">
+                        <label for="office_11_10">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.6km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 512-5 106호</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_11" class="visit-checkbox">
+                    <label for="visit_11">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">12</div>
+                    <div class="apartment-name">평창리비에르2차</div>
+                    <div class="apartment-info">
+                        <span>🏠 1579.0세대</span>
+                        <span>🎯 3개 사무소</span>
+                        <span>📊 상위20% 평균: 40.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%ED%8F%89%EC%B0%BD%EB%A6%AC%EB%B9%84%EC%97%90%EB%A5%B42%EC%B0%A8?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">부국부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_12_1" class="office-visit-checkbox">
+                        <label for="office_12_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.58km</div>
+                        <div>🏢 매물 10건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 명촌동 697-15 울산강변효성해링턴플레이...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">스카이부동산중개</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_12_2" class="office-visit-checkbox">
+                        <label for="office_12_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.76km</div>
+                        <div>🏢 매물 25건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 반구동 570-1</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">the바른공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_12_3" class="office-visit-checkbox">
+                        <label for="office_12_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.89km</div>
+                        <div>🏢 매물 40건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 반구동 876-21 1층</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_12" class="visit-checkbox">
+                    <label for="visit_12">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">13</div>
+                    <div class="apartment-name">세양청구마을</div>
+                    <div class="apartment-info">
+                        <span>🏠 1562.0세대</span>
+                        <span>🎯 4개 사무소</span>
+                        <span>📊 상위20% 평균: 22.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%84%B8%EC%96%91%EC%B2%AD%EA%B5%AC%EB%A7%88%EC%9D%84?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">삼산탑부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_13_1" class="office-visit-checkbox">
+                        <label for="office_13_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.44km</div>
+                        <div>🏢 매물 22건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 삼산동 182-1 아데라움아파트 109...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">삼산부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_13_2" class="office-visit-checkbox">
+                        <label for="office_13_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.82km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 삼산동 1624-1 코아루벨라체 상가105...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">코아루벨라채 부동산중개사무소미소지움부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_13_3" class="office-visit-checkbox">
+                        <label for="office_13_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.82km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 삼산동 1624-1 상가 116호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">삼산퀸부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_13_4" class="office-visit-checkbox">
+                        <label for="office_13_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.85km</div>
+                        <div>🏢 매물 1건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 삼산동 1556-10 1층</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_13" class="visit-checkbox">
+                    <label for="visit_13">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">14</div>
+                    <div class="apartment-name">영남알프스타운</div>
+                    <div class="apartment-info">
+                        <span>🏠 1540.0세대</span>
+                        <span>🎯 1개 사무소</span>
+                        <span>📊 상위20% 평균: 23.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%98%81%EB%82%A8%EC%95%8C%ED%94%84%EC%8A%A4%ED%83%80%EC%9A%B4?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">영남알프스부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_14_1" class="office-visit-checkbox">
+                        <label for="office_14_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.02km</div>
+                        <div>🏢 매물 23건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 울주군 삼남읍 교동리 1678 영남알프스타운...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_14" class="visit-checkbox">
+                    <label for="visit_14">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">15</div>
+                    <div class="apartment-name">동부</div>
+                    <div class="apartment-info">
+                        <span>🏠 1504.0세대</span>
+                        <span>🎯 8개 사무소</span>
+                        <span>📊 상위20% 평균: 68.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EB%8F%99%EB%B6%80?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">위드부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_15_1" class="office-visit-checkbox">
+                        <label for="office_15_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.32km</div>
+                        <div>🏢 매물 32건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 912 대현더샵2단지 상가 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵메인부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_15_2" class="office-visit-checkbox">
+                        <label for="office_15_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.47km</div>
+                        <div>🏢 매물 63건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 대현시티프라디움 근생3동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵정직한부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_15_3" class="office-visit-checkbox">
+                        <label for="office_15_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.47km</div>
+                        <div>🏢 매물 43건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 시티프라디움 근생3동 106...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">한아름부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_15_4" class="office-visit-checkbox">
+                        <label for="office_15_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.54km</div>
+                        <div>🏢 매물 4건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 881 롯데캐슬2단지아파트 일반상가...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">신정현대대표부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_15_5" class="office-visit-checkbox">
+                        <label for="office_15_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.72km</div>
+                        <div>🏢 매물 68건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 866-3 신정현대프라자 107...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">미래로부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_15_6" class="office-visit-checkbox">
+                        <label for="office_15_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.75km</div>
+                        <div>🏢 매물 66건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 910 번영로 두산위브 201동...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">라엘에스행복한365부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_15_7" class="office-visit-checkbox">
+                        <label for="office_15_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.76km</div>
+                        <div>🏢 매물 35건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 936-58 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">번영로더샵부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_15_8" class="office-visit-checkbox">
+                        <label for="office_15_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.83km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 471-113 1층</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_15" class="visit-checkbox">
+                    <label for="visit_15">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">16</div>
+                    <div class="apartment-name">이편한세상전하(1,2단지)</div>
+                    <div class="apartment-info">
+                        <span>🏠 1475.0세대</span>
+                        <span>🎯 6개 사무소</span>
+                        <span>📊 상위20% 평균: 81.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%9D%B4%ED%8E%B8%ED%95%9C%EC%84%B8%EC%83%81%EC%A0%84%ED%95%98%281%2C2%EB%8B%A8%EC%A7%80%29?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">바른공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_16_1" class="office-visit-checkbox">
+                        <label for="office_16_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.1km</div>
+                        <div>🏢 매물 81건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 630-1 e편한세상 전하 상가동 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">아름드리부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_16_2" class="office-visit-checkbox">
+                        <label for="office_16_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.17km</div>
+                        <div>🏢 매물 39건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 전하동 640-1 전하I'PARK 근린...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">대세공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_16_3" class="office-visit-checkbox">
+                        <label for="office_16_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.28km</div>
+                        <div>🏢 매물 73건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 543-21</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">스마트공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_16_4" class="office-visit-checkbox">
+                        <label for="office_16_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.37km</div>
+                        <div>🏢 매물 39건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 301-45 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">스마트공인중개사</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_16_5" class="office-visit-checkbox">
+                        <label for="office_16_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.41km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산 동구 전하1동 751-12</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">태화부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_16_6" class="office-visit-checkbox">
+                        <label for="office_16_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.66km</div>
+                        <div>🏢 매물 54건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 299-10  A3타워 106호</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_16" class="visit-checkbox">
+                    <label for="visit_16">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">17</div>
+                    <div class="apartment-name">양정힐스테이트</div>
+                    <div class="apartment-info">
+                        <span>🏠 1443.0세대</span>
+                        <span>🎯 1개 사무소</span>
+                        <span>📊 상위20% 평균: 28.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%96%91%EC%A0%95%ED%9E%90%EC%8A%A4%ED%85%8C%EC%9D%B4%ED%8A%B8?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">율동제일부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_17_1" class="office-visit-checkbox">
+                        <label for="office_17_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.85km</div>
+                        <div>🏢 매물 28건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 양정동 818-3 한신더휴에듀포레3단지...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_17" class="visit-checkbox">
+                    <label for="visit_17">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">18</div>
+                    <div class="apartment-name">신정현대홈타운(2단지)</div>
+                    <div class="apartment-info">
+                        <span>🏠 1420.0세대</span>
+                        <span>🎯 9개 사무소</span>
+                        <span>📊 상위20% 평균: 90.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%8B%A0%EC%A0%95%ED%98%84%EB%8C%80%ED%99%88%ED%83%80%EC%9A%B4%282%EB%8B%A8%EC%A7%80%29?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">신정현대대표부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_18_1" class="office-visit-checkbox">
+                        <label for="office_18_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.13km</div>
+                        <div>🏢 매물 68건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 866-3 신정현대프라자 107...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">미래로부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_18_2" class="office-visit-checkbox">
+                        <label for="office_18_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.48km</div>
+                        <div>🏢 매물 66건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 910 번영로 두산위브 201동...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵메인부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_18_3" class="office-visit-checkbox">
+                        <label for="office_18_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.56km</div>
+                        <div>🏢 매물 63건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 대현시티프라디움 근생3동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵정직한부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_18_4" class="office-visit-checkbox">
+                        <label for="office_18_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.58km</div>
+                        <div>🏢 매물 43건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 시티프라디움 근생3동 106...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">위드부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_18_5" class="office-visit-checkbox">
+                        <label for="office_18_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.65km</div>
+                        <div>🏢 매물 32건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 912 대현더샵2단지 상가 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">번영로더샵부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_18_6" class="office-visit-checkbox">
+                        <label for="office_18_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.7km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 471-113 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">번영로더샵부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_18_7" class="office-visit-checkbox">
+                        <label for="office_18_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.76km</div>
+                        <div>🏢 매물 10건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 487-8 더샵번영센트로 상가동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">라엘에스스마일부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_18_8" class="office-visit-checkbox">
+                        <label for="office_18_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.95km</div>
+                        <div>🏢 매물 33건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 800-4 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">웰컴투부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_18_9" class="office-visit-checkbox">
+                        <label for="office_18_9">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.95km</div>
+                        <div>🏢 매물 90건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 800-4 1층</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_18" class="visit-checkbox">
+                    <label for="visit_18">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">19</div>
+                    <div class="apartment-name">옥현으뜸마을주공3단지</div>
+                    <div class="apartment-info">
+                        <span>🏠 1412.0세대</span>
+                        <span>🎯 1개 사무소</span>
+                        <span>📊 상위20% 평균: 24.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%98%A5%ED%98%84%EC%9C%BC%EB%9C%B8%EB%A7%88%EC%9D%84%EC%A3%BC%EA%B3%B53%EB%8B%A8%EC%A7%80?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">행운가득부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_19_1" class="office-visit-checkbox">
+                        <label for="office_19_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.59km</div>
+                        <div>🏢 매물 24건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 무거동 567-5 1층</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_19" class="visit-checkbox">
+                    <label for="visit_19">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">20</div>
+                    <div class="apartment-name">신영울산지웰시티자이1단지</div>
+                    <div class="apartment-info">
+                        <span>🏠 1371.0세대</span>
+                        <span>🎯 3개 사무소</span>
+                        <span>📊 상위20% 평균: 168.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%8B%A0%EC%98%81%EC%9A%B8%EC%82%B0%EC%A7%80%EC%9B%B0%EC%8B%9C%ED%8B%B0%EC%9E%90%EC%9D%B41%EB%8B%A8%EC%A7%80?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">서부자이단지내공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_20_1" class="office-visit-checkbox">
+                        <label for="office_20_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.05km</div>
+                        <div>🏢 매물 168건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1049 신영 울산 지웰시티 자...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">코코자이부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_20_2" class="office-visit-checkbox">
+                        <label for="office_20_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.08km</div>
+                        <div>🏢 매물 80건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 서부동 1049 신영울산지웰시티자이1단지상...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">자이탑부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_20_3" class="office-visit-checkbox">
+                        <label for="office_20_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.17km</div>
+                        <div>🏢 매물 37건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1055 신영울산지웰시티자이2단...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_20" class="visit-checkbox">
+                    <label for="visit_20">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">21</div>
+                    <div class="apartment-name">전하푸르지오(1,2단지)</div>
+                    <div class="apartment-info">
+                        <span>🏠 1345.0세대</span>
+                        <span>🎯 6개 사무소</span>
+                        <span>📊 상위20% 평균: 81.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%A0%84%ED%95%98%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A4%281%2C2%EB%8B%A8%EC%A7%80%29?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">아름드리부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_21_1" class="office-visit-checkbox">
+                        <label for="office_21_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.18km</div>
+                        <div>🏢 매물 39건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 전하동 640-1 전하I'PARK 근린...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">스마트공인중개사</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_21_2" class="office-visit-checkbox">
+                        <label for="office_21_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.2km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산 동구 전하1동 751-12</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">바른공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_21_3" class="office-visit-checkbox">
+                        <label for="office_21_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.29km</div>
+                        <div>🏢 매물 81건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 630-1 e편한세상 전하 상가동 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">대세공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_21_4" class="office-visit-checkbox">
+                        <label for="office_21_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.61km</div>
+                        <div>🏢 매물 73건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 543-21</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">스마트공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_21_5" class="office-visit-checkbox">
+                        <label for="office_21_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.7km</div>
+                        <div>🏢 매물 39건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 301-45 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">태화부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_21_6" class="office-visit-checkbox">
+                        <label for="office_21_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.99km</div>
+                        <div>🏢 매물 54건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 299-10  A3타워 106호</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_21" class="visit-checkbox">
+                    <label for="visit_21">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">22</div>
+                    <div class="apartment-name">신영울산지웰시티자이2단지</div>
+                    <div class="apartment-info">
+                        <span>🏠 1316.0세대</span>
+                        <span>🎯 4개 사무소</span>
+                        <span>📊 상위20% 평균: 168.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%8B%A0%EC%98%81%EC%9A%B8%EC%82%B0%EC%A7%80%EC%9B%B0%EC%8B%9C%ED%8B%B0%EC%9E%90%EC%9D%B42%EB%8B%A8%EC%A7%80?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">자이탑부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_22_1" class="office-visit-checkbox">
+                        <label for="office_22_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.09km</div>
+                        <div>🏢 매물 37건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1055 신영울산지웰시티자이2단...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">코코자이부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_22_2" class="office-visit-checkbox">
+                        <label for="office_22_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.18km</div>
+                        <div>🏢 매물 80건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 서부동 1049 신영울산지웰시티자이1단지상...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">서부자이단지내공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_22_3" class="office-visit-checkbox">
+                        <label for="office_22_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.28km</div>
+                        <div>🏢 매물 168건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1049 신영 울산 지웰시티 자...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">태화부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_22_4" class="office-visit-checkbox">
+                        <label for="office_22_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.94km</div>
+                        <div>🏢 매물 54건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 299-10  A3타워 106호</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_22" class="visit-checkbox">
+                    <label for="visit_22">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">23</div>
+                    <div class="apartment-name">울산신정푸르지오</div>
+                    <div class="apartment-info">
+                        <span>🏠 1280.0세대</span>
+                        <span>🎯 7개 사무소</span>
+                        <span>📊 상위20% 평균: 744.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%9A%B8%EC%82%B0%EC%8B%A0%EC%A0%95%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A4?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">좋은집부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_23_1" class="office-visit-checkbox">
+                        <label for="office_23_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.04km</div>
+                        <div>🏢 매물 41건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 318 울산신정푸르지오 502동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">행운당근부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_23_2" class="office-visit-checkbox">
+                        <label for="office_23_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.34km</div>
+                        <div>🏢 매물 744건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 신정동 468-1 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">태화강아이파크공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_23_3" class="office-visit-checkbox">
+                        <label for="office_23_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.67km</div>
+                        <div>🏢 매물 91건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 중구 성남동 360 울산 태화강 아이파크 상...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">봄날드림부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_23_4" class="office-visit-checkbox">
+                        <label for="office_23_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.73km</div>
+                        <div>🏢 매물 22건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 중구 우정동 172-5 진흥마제스타워울산 2...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">마제스부동산중개</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_23_5" class="office-visit-checkbox">
+                        <label for="office_23_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.76km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 172 마제스타워울산 105동 20...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">믿음부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_23_6" class="office-visit-checkbox">
+                        <label for="office_23_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.86km</div>
+                        <div>🏢 매물 70건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 우정동 215-4 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">88부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_23_7" class="office-visit-checkbox">
+                        <label for="office_23_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.91km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 신정동 155-7</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_23" class="visit-checkbox">
+                    <label for="visit_23">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">24</div>
+                    <div class="apartment-name">드림인시티에일린의뜰1차</div>
+                    <div class="apartment-info">
+                        <span>🏠 1275.0세대</span>
+                        <span>🎯 8개 사무소</span>
+                        <span>📊 상위20% 평균: 176.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EB%93%9C%EB%A6%BC%EC%9D%B8%EC%8B%9C%ED%8B%B0%EC%97%90%EC%9D%BC%EB%A6%B0%EC%9D%98%EB%9C%B01%EC%B0%A8?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">에뜰정원부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_24_1" class="office-visit-checkbox">
+                        <label for="office_24_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.13km</div>
+                        <div>🏢 매물 176건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 897 드림인시티에일린의뜰 1차 상...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">Hello에뜰부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_24_2" class="office-visit-checkbox">
+                        <label for="office_24_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.21km</div>
+                        <div>🏢 매물 69건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 896 드림인시티 에일린의뜰 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">강남부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_24_3" class="office-visit-checkbox">
+                        <label for="office_24_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.27km</div>
+                        <div>🏢 매물 23건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 895 드림인시티 에일린의뜰 2...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">봄부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_24_4" class="office-visit-checkbox">
+                        <label for="office_24_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.27km</div>
+                        <div>🏢 매물 17건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 895 드림인시티 에일린의뜰 2차 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">신세계부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_24_5" class="office-visit-checkbox">
+                        <label for="office_24_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.45km</div>
+                        <div>🏢 매물 14건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 233 상가동 106호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">복부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_24_6" class="office-visit-checkbox">
+                        <label for="office_24_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.6km</div>
+                        <div>🏢 매물 13건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 호계동 1015-6 108호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">주식회사공장온부동산중개법인</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_24_7" class="office-visit-checkbox">
+                        <label for="office_24_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.6km</div>
+                        <div>🏢 매물 60건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 호계동 1015-6 501호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">월드사랑공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_24_8" class="office-visit-checkbox">
+                        <label for="office_24_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.62km</div>
+                        <div>🏢 매물 31건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 864 월드메르디앙월드시티 128동...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_24" class="visit-checkbox">
+                    <label for="visit_24">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">25</div>
+                    <div class="apartment-name">신성미소지움</div>
+                    <div class="apartment-info">
+                        <span>🏠 1244.0세대</span>
+                        <span>🎯 8개 사무소</span>
+                        <span>📊 상위20% 평균: 90.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%8B%A0%EC%84%B1%EB%AF%B8%EC%86%8C%EC%A7%80%EC%9B%80?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">신정현대대표부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_25_1" class="office-visit-checkbox">
+                        <label for="office_25_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.42km</div>
+                        <div>🏢 매물 68건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 866-3 신정현대프라자 107...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">라엘에스스마일부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_25_2" class="office-visit-checkbox">
+                        <label for="office_25_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.5km</div>
+                        <div>🏢 매물 33건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 800-4 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">웰컴투부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_25_3" class="office-visit-checkbox">
+                        <label for="office_25_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.5km</div>
+                        <div>🏢 매물 90건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 800-4 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">라엘에스행복한365부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_25_4" class="office-visit-checkbox">
+                        <label for="office_25_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.81km</div>
+                        <div>🏢 매물 35건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 신정동 936-58 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">미래로부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_25_5" class="office-visit-checkbox">
+                        <label for="office_25_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.95km</div>
+                        <div>🏢 매물 66건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 910 번영로 두산위브 201동...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵메인부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_25_6" class="office-visit-checkbox">
+                        <label for="office_25_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.98km</div>
+                        <div>🏢 매물 63건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 대현시티프라디움 근생3동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵정직한부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_25_7" class="office-visit-checkbox">
+                        <label for="office_25_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.99km</div>
+                        <div>🏢 매물 43건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 시티프라디움 근생3동 106...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">위드부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_25_8" class="office-visit-checkbox">
+                        <label for="office_25_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.99km</div>
+                        <div>🏢 매물 32건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 912 대현더샵2단지 상가 102호</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_25" class="visit-checkbox">
+                    <label for="visit_25">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">26</div>
+                    <div class="apartment-name">현대패밀리명덕(1차)</div>
+                    <div class="apartment-info">
+                        <span>🏠 1206.0세대</span>
+                        <span>🎯 5개 사무소</span>
+                        <span>📊 상위20% 평균: 168.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%ED%98%84%EB%8C%80%ED%8C%A8%EB%B0%80%EB%A6%AC%EB%AA%85%EB%8D%95%281%EC%B0%A8%29?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">자이탑부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_26_1" class="office-visit-checkbox">
+                        <label for="office_26_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.36km</div>
+                        <div>🏢 매물 37건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1055 신영울산지웰시티자이2단...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">코코자이부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_26_2" class="office-visit-checkbox">
+                        <label for="office_26_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.38km</div>
+                        <div>🏢 매물 80건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 서부동 1049 신영울산지웰시티자이1단지상...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">서부자이단지내공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_26_3" class="office-visit-checkbox">
+                        <label for="office_26_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.46km</div>
+                        <div>🏢 매물 168건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 동구 서부동 1049 신영 울산 지웰시티 자...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">태화부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_26_4" class="office-visit-checkbox">
+                        <label for="office_26_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.68km</div>
+                        <div>🏢 매물 54건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 299-10  A3타워 106호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">스마트공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_26_5" class="office-visit-checkbox">
+                        <label for="office_26_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.95km</div>
+                        <div>🏢 매물 39건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 동구 전하동 301-45 102호</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_26" class="visit-checkbox">
+                    <label for="visit_26">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">27</div>
+                    <div class="apartment-name">다운</div>
+                    <div class="apartment-info">
+                        <span>🏠 1200.0세대</span>
+                        <span>🎯 2개 사무소</span>
+                        <span>📊 상위20% 평균: 27.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EB%8B%A4%EC%9A%B4?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">다운동아메가부동산중개</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_27_1" class="office-visit-checkbox">
+                        <label for="office_27_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.4km</div>
+                        <div>🏢 매물 27건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 중구 다운동 702 다운 동아 큰마을아파트 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">신목화공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_27_2" class="office-visit-checkbox">
+                        <label for="office_27_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.82km</div>
+                        <div>🏢 매물 9건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 다운동 515-2 1층</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_27" class="visit-checkbox">
+                    <label for="visit_27">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">28</div>
+                    <div class="apartment-name">드림인시티에일린의뜰2차</div>
+                    <div class="apartment-info">
+                        <span>🏠 1187.0세대</span>
+                        <span>🎯 9개 사무소</span>
+                        <span>📊 상위20% 평균: 176.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EB%93%9C%EB%A6%BC%EC%9D%B8%EC%8B%9C%ED%8B%B0%EC%97%90%EC%9D%BC%EB%A6%B0%EC%9D%98%EB%9C%B02%EC%B0%A8?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">강남부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_28_1" class="office-visit-checkbox">
+                        <label for="office_28_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.06km</div>
+                        <div>🏢 매물 23건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 895 드림인시티 에일린의뜰 2...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">봄부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_28_2" class="office-visit-checkbox">
+                        <label for="office_28_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.06km</div>
+                        <div>🏢 매물 17건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 895 드림인시티 에일린의뜰 2차 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">신세계부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_28_3" class="office-visit-checkbox">
+                        <label for="office_28_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.21km</div>
+                        <div>🏢 매물 14건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 233 상가동 106호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">Hello에뜰부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_28_4" class="office-visit-checkbox">
+                        <label for="office_28_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.28km</div>
+                        <div>🏢 매물 69건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 896 드림인시티 에일린의뜰 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">에뜰정원부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_28_5" class="office-visit-checkbox">
+                        <label for="office_28_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.29km</div>
+                        <div>🏢 매물 176건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 897 드림인시티에일린의뜰 1차 상...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">월드사랑공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_28_6" class="office-visit-checkbox">
+                        <label for="office_28_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.42km</div>
+                        <div>🏢 매물 31건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 864 월드메르디앙월드시티 128동...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">복부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_28_7" class="office-visit-checkbox">
+                        <label for="office_28_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.58km</div>
+                        <div>🏢 매물 13건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 호계동 1015-6 108호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">주식회사공장온부동산중개법인</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_28_8" class="office-visit-checkbox">
+                        <label for="office_28_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.58km</div>
+                        <div>🏢 매물 60건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 호계동 1015-6 501호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">정토공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_28_9" class="office-visit-checkbox">
+                        <label for="office_28_9">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.85km</div>
+                        <div>🏢 매물 101건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 542-29</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_28" class="visit-checkbox">
+                    <label for="visit_28">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">29</div>
+                    <div class="apartment-name">울산송정반도유보라아이비파크</div>
+                    <div class="apartment-info">
+                        <span>🏠 1162.0세대</span>
+                        <span>🎯 3개 사무소</span>
+                        <span>📊 상위20% 평균: 31.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%9A%B8%EC%82%B0%EC%86%A1%EC%A0%95%EB%B0%98%EB%8F%84%EC%9C%A0%EB%B3%B4%EB%9D%BC%EC%95%84%EC%9D%B4%EB%B9%84%ED%8C%8C%ED%81%AC?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">송정반도부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_29_1" class="office-visit-checkbox">
+                        <label for="office_29_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.0km</div>
+                        <div>🏢 매물 3건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 송정동 1237-2 반도유보라 아이비파...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">송정하나부동산중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_29_2" class="office-visit-checkbox">
+                        <label for="office_29_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.0km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 송정동 1237-2 반도유보라 아이비파크 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">드론부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_29_3" class="office-visit-checkbox">
+                        <label for="office_29_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.24km</div>
+                        <div>🏢 매물 31건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 송정동 1232-1 108호</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_29" class="visit-checkbox">
+                    <label for="visit_29">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">30</div>
+                    <div class="apartment-name">이편한세상강변</div>
+                    <div class="apartment-info">
+                        <span>🏠 1112.0세대</span>
+                        <span>🎯 3개 사무소</span>
+                        <span>📊 상위20% 평균: 40.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%9D%B4%ED%8E%B8%ED%95%9C%EC%84%B8%EC%83%81%EA%B0%95%EB%B3%80?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">스카이부동산중개</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_30_1" class="office-visit-checkbox">
+                        <label for="office_30_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.14km</div>
+                        <div>🏢 매물 25건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 반구동 570-1</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">the바른공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_30_2" class="office-visit-checkbox">
+                        <label for="office_30_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.46km</div>
+                        <div>🏢 매물 40건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 중구 반구동 876-21 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">부국부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_30_3" class="office-visit-checkbox">
+                        <label for="office_30_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.62km</div>
+                        <div>🏢 매물 10건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 명촌동 697-15 울산강변효성해링턴플레이...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_30" class="visit-checkbox">
+                    <label for="visit_30">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">31</div>
+                    <div class="apartment-name">신정현대홈타운(1단지)</div>
+                    <div class="apartment-info">
+                        <span>🏠 1085.0세대</span>
+                        <span>🎯 8개 사무소</span>
+                        <span>📊 상위20% 평균: 101.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%8B%A0%EC%A0%95%ED%98%84%EB%8C%80%ED%99%88%ED%83%80%EC%9A%B4%281%EB%8B%A8%EC%A7%80%29?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">신정현대대표부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_31_1" class="office-visit-checkbox">
+                        <label for="office_31_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.11km</div>
+                        <div>🏢 매물 68건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 866-3 신정현대프라자 107...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">미래로부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_31_2" class="office-visit-checkbox">
+                        <label for="office_31_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.45km</div>
+                        <div>🏢 매물 66건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 910 번영로 두산위브 201동...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵메인부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_31_3" class="office-visit-checkbox">
+                        <label for="office_31_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.62km</div>
+                        <div>🏢 매물 63건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 대현시티프라디움 근생3동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">더샵정직한부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_31_4" class="office-visit-checkbox">
+                        <label for="office_31_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.64km</div>
+                        <div>🏢 매물 43건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 942 시티프라디움 근생3동 106...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">번영로더샵부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_31_5" class="office-visit-checkbox">
+                        <label for="office_31_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.68km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 남구 야음동 471-113 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">번영로더샵부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_31_6" class="office-visit-checkbox">
+                        <label for="office_31_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.71km</div>
+                        <div>🏢 매물 10건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 487-8 더샵번영센트로 상가동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">위드부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_31_7" class="office-visit-checkbox">
+                        <label for="office_31_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.74km</div>
+                        <div>🏢 매물 32건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 야음동 912 대현더샵2단지 상가 102호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">주연부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_31_8" class="office-visit-checkbox">
+                        <label for="office_31_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 1.0km</div>
+                        <div>🏢 매물 101건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 달동 1279-6 2층</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_31" class="visit-checkbox">
+                    <label for="visit_31">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">32</div>
+                    <div class="apartment-name">월드메르디앙월드시티(2단지)</div>
+                    <div class="apartment-info">
+                        <span>🏠 1061.0세대</span>
+                        <span>🎯 8개 사무소</span>
+                        <span>📊 상위20% 평균: 176.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%9B%94%EB%93%9C%EB%A9%94%EB%A5%B4%EB%94%94%EC%95%99%EC%9B%94%EB%93%9C%EC%8B%9C%ED%8B%B0%282%EB%8B%A8%EC%A7%80%29?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">월드사랑공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_32_1" class="office-visit-checkbox">
+                        <label for="office_32_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.19km</div>
+                        <div>🏢 매물 31건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 864 월드메르디앙월드시티 128동...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">정토공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_32_2" class="office-visit-checkbox">
+                        <label for="office_32_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.33km</div>
+                        <div>🏢 매물 101건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 542-29</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">신세계부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_32_3" class="office-visit-checkbox">
+                        <label for="office_32_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.4km</div>
+                        <div>🏢 매물 14건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 233 상가동 106호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">솔루션공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_32_4" class="office-visit-checkbox">
+                        <label for="office_32_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.42km</div>
+                        <div>🏢 매물 22건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 572 현대파크맨션 111동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">강남부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_32_5" class="office-visit-checkbox">
+                        <label for="office_32_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.66km</div>
+                        <div>🏢 매물 23건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 895 드림인시티 에일린의뜰 2...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">봄부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_32_6" class="office-visit-checkbox">
+                        <label for="office_32_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.66km</div>
+                        <div>🏢 매물 17건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 895 드림인시티 에일린의뜰 2차 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">Hello에뜰부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_32_7" class="office-visit-checkbox">
+                        <label for="office_32_7">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.88km</div>
+                        <div>🏢 매물 69건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 896 드림인시티 에일린의뜰 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">에뜰정원부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_32_8" class="office-visit-checkbox">
+                        <label for="office_32_8">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.88km</div>
+                        <div>🏢 매물 176건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 897 드림인시티에일린의뜰 1차 상...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_32" class="visit-checkbox">
+                    <label for="visit_32">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">33</div>
+                    <div class="apartment-name">오토밸리로효성해링턴플레이스</div>
+                    <div class="apartment-info">
+                        <span>🏠 1059.0세대</span>
+                        <span>🎯 5개 사무소</span>
+                        <span>📊 상위20% 평균: 101.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%98%A4%ED%86%A0%EB%B0%B8%EB%A6%AC%EB%A1%9C%ED%9A%A8%EC%84%B1%ED%95%B4%EB%A7%81%ED%84%B4%ED%94%8C%EB%A0%88%EC%9D%B4%EC%8A%A4?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">솔루션공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_33_1" class="office-visit-checkbox">
+                        <label for="office_33_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.47km</div>
+                        <div>🏢 매물 22건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 북구 매곡동 572 현대파크맨션 111동 1...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">태화부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_33_2" class="office-visit-checkbox">
+                        <label for="office_33_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.54km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 중산동 967</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">줌파크부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_33_3" class="office-visit-checkbox">
+                        <label for="office_33_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.57km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 중산동 1281-3 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">정토공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_33_4" class="office-visit-checkbox">
+                        <label for="office_33_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.68km</div>
+                        <div>🏢 매물 101건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 매곡동 542-29</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">줌파크부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_33_5" class="office-visit-checkbox">
+                        <label for="office_33_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.75km</div>
+                        <div>🏢 매물 24건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 북구 중산동 1277-1 오토밸리로Zoom파크 ...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_33" class="visit-checkbox">
+                    <label for="visit_33">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">34</div>
+                    <div class="apartment-name">굴화주공(1단지)</div>
+                    <div class="apartment-info">
+                        <span>🏠 1046.0세대</span>
+                        <span>🎯 5개 사무소</span>
+                        <span>📊 상위20% 평균: 40.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EA%B5%B4%ED%99%94%EC%A3%BC%EA%B3%B5%281%EB%8B%A8%EC%A7%80%29?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">메르디앙공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_34_1" class="office-visit-checkbox">
+                        <label for="office_34_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.37km</div>
+                        <div>🏢 매물 13건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 울주군 범서읍 굴화리 36-9 1층</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">베스트부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_34_2" class="office-visit-checkbox">
+                        <label for="office_34_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.93km</div>
+                        <div>🏢 매물 16건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 울주군 범서읍 굴화리 743-1 문수산푸르지오 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">키움푸르지오동원더샵부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_34_3" class="office-visit-checkbox">
+                        <label for="office_34_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.93km</div>
+                        <div>🏢 매물 40건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 울주군 범서읍 굴화리 743-1 문수산푸르지...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">태인공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_34_4" class="office-visit-checkbox">
+                        <label for="office_34_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.93km</div>
+                        <div>🏢 매물 18건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 울주군 범서읍 굴화리 743-1 문수산푸르지오 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">문수동원APT부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_34_5" class="office-visit-checkbox">
+                        <label for="office_34_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.96km</div>
+                        <div>🏢 매물 34건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 남구 무거동 1184-1 문수동원비스타 상가 2...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_34" class="visit-checkbox">
+                    <label for="visit_34">방문 완료</label>
+                </div>
+            </div>
+            
+
+            <div class="apartment-card">
+                <div class="apartment-header">
+                    <div class="order-number">35</div>
+                    <div class="apartment-name">울산문수산더샵</div>
+                    <div class="apartment-info">
+                        <span>🏠 1005.0세대</span>
+                        <span>🎯 6개 사무소</span>
+                        <span>📊 상위20% 평균: 40.0개</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 0 15px;">
+                    <a href="https://map.naver.com/v5/search/%EC%9A%B8%EC%82%B0%EB%AC%B8%EC%88%98%EC%82%B0%EB%8D%94%EC%83%B5?c=127.0,37.5,15,0,0,0,dh" target="_blank" class="map-button">네이버 지도에서 보기</a>
+                </div>
+                
+                <div class="office-list">
+                    
+                <div class="office-item">
+                    <div class="office-name">문수산더샵공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_35_1" class="office-visit-checkbox">
+                        <label for="office_35_1">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.13km</div>
+                        <div>🏢 매물 12건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 울주군 범서읍 굴화리 752-3 1층 103호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">동원공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_35_2" class="office-visit-checkbox">
+                        <label for="office_35_2">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.39km</div>
+                        <div>🏢 매물 4건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 울주군 범서읍 굴화리 743-2 문수산동원로얄듀...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">문수동원공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_35_3" class="office-visit-checkbox">
+                        <label for="office_35_3">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.39km</div>
+                        <div>🏢 매물 0건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 울주군 범서읍 굴화리 743-2 B107호</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">키움푸르지오동원더샵부동산중개사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_35_4" class="office-visit-checkbox">
+                        <label for="office_35_4">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.48km</div>
+                        <div>🏢 매물 40건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산광역시 울주군 범서읍 굴화리 743-1 문수산푸르지...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">베스트부동산공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_35_5" class="office-visit-checkbox">
+                        <label for="office_35_5">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.49km</div>
+                        <div>🏢 매물 16건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 울주군 범서읍 굴화리 743-1 문수산푸르지오 ...</div>
+                    </div>
+                </div>
+                
+                <div class="office-item">
+                    <div class="office-name">태인공인중개사사무소</div>
+                    <div class="office-checkbox">
+                        <input type="checkbox" id="office_35_6" class="office-visit-checkbox">
+                        <label for="office_35_6">방문</label>
+                    </div>
+                    <div class="office-details">
+                        <div>📞 전화번호 없음</div>
+                        <div>📏 0.49km</div>
+                        <div>🏢 매물 18건</div>
+                        <div>⭐ 점수 0</div>
+                        <div style="grid-column: 1/-1;">📍 울산시 울주군 범서읍 굴화리 743-1 문수산푸르지오 ...</div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="visit_35" class="visit-checkbox">
+                    <label for="visit_35">방문 완료</label>
+                </div>
+            </div>
+            
+    
+    <div class="bottom-nav">
+        <button class="nav-btn" onclick="scrollToTop()">맨 위로</button>
+        <button class="nav-btn" onclick="updateProgress()">진행률</button>
+        <button class="nav-btn" onclick="exportData()">저장</button>
+    </div>
+    
+    <script>
+        // 체크박스 상태 로컬 저장 (아파트 + 사무소)
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            const id = checkbox.id;
+            const saved = localStorage.getItem(id);
+            if (saved === 'true') {
+                checkbox.checked = true;
+            }
+            
+            checkbox.addEventListener('change', function() {
+                localStorage.setItem(id, this.checked);
+                updateProgress();
+            });
+        });
+        
+        function updateProgress() {
+            // 아파트 진행률
+            const totalApt = document.querySelectorAll('.visit-checkbox').length;
+            const checkedApt = document.querySelectorAll('.visit-checkbox:checked').length;
+            
+            // 사무소 진행률
+            const totalOffice = document.querySelectorAll('.office-visit-checkbox').length;
+            const checkedOffice = document.querySelectorAll('.office-visit-checkbox:checked').length;
+            
+            const aptPercentage = totalApt > 0 ? (checkedApt / totalApt * 100).toFixed(0) : 0;
+            
+            document.getElementById('progressBar').style.width = aptPercentage + '%';
+            
+            // 진행 상태 표시 업데이트
+            const statusText = '아파트: ' + checkedApt + '/' + totalApt + ' | 사무소: ' + checkedOffice + '/' + totalOffice;
+            const progressStatus = document.getElementById('progressStatus');
+            if (progressStatus) {
+                progressStatus.textContent = statusText;
+            }
+            
+            if (checkedApt === totalApt && totalApt > 0) {
+                alert('🎉 모든 아파트 방문 완료!');
+            }
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+        
+        function exportData() {
+            const data = {
+                apartments: [],
+                offices: []
+            };
+            
+            // 아파트 데이터 수집
+            document.querySelectorAll('.apartment-card').forEach(card => {
+                const name = card.querySelector('.apartment-name').textContent;
+                const visited = card.querySelector('.visit-checkbox').checked;
+                data.apartments.push({name, visited});
+                
+                // 해당 아파트의 사무소 데이터
+                card.querySelectorAll('.office-visit-checkbox').forEach(officeCheck => {
+                    const officeName = officeCheck.closest('.office-item').querySelector('.office-name').textContent.trim();
+                    data.offices.push({
+                        apartment: name,
+                        office: officeName,
+                        visited: officeCheck.checked
+                    });
+                });
+            });
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'visit_status_2025-08-26.json';
+            a.click();
+        }
+        
+        // 페이지 로드시 진행률 업데이트
+        window.onload = function() {
+            updateProgress();
+        };
+    </script>
+</body>
+</html>
