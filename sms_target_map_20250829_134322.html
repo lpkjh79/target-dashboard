@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_204f14769835b8e9058a9c8fa6a9f165 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/ljagis/leaflet-measure@2.1.7/dist/leaflet-measure.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ljagis/leaflet-measure@2.1.7/dist/leaflet-measure.min.css"/>
+</head>
+<body>
+    
+    
+    <div style="position: fixed; 
+                bottom: 50px; right: 50px; width: 220px; height: auto;
+                background-color: white; z-index:9999; font-size:14px;
+                border:2px solid grey; border-radius:5px; padding: 10px">
+        <p style="margin: 5px;"><b>SMS 발송대상 지도</b></p>
+        <hr style="margin: 5px;">
+        <p style="margin: 5px;"><b>사무소:</b></p>
+        <p style="margin: 5px;"><span style="color:blue">●</span> 선택된 사무소</p>
+        
+        <hr style="margin: 5px;">
+        <p style="margin: 5px;"><b>표시:</b></p>
+        <p style="margin: 5px;">⭕ 0.5km 클러스터 반경</p>
+        <p style="margin: 5px;"><span style="color:red">―</span> 거리 위반 (0.50km 미만)</p>
+    </div>
+    
+    
+    <div style="position: fixed; 
+                top: 10px; right: 10px; width: 220px; height: auto;
+                background-color: white; z-index:9999; font-size:12px;
+                border:2px solid grey; border-radius:5px; padding: 10px">
+        <p style="margin: 5px;"><b>통계</b></p>
+        <p style="margin: 5px;">클러스터 거리: 0.5km</p>
+        <p style="margin: 5px;">선택된 사무소: 18개</p>
+        <p style="margin: 5px;">제외된 사무소: 0개</p>
+        <p style="margin: 5px;">최소 거리: 776m</p>
+        <p style="margin: 5px;">0.50km 이내: 0건</p>
+        
+    </div>
+    
+    
+            <div class="folium-map" id="map_204f14769835b8e9058a9c8fa6a9f165" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_204f14769835b8e9058a9c8fa6a9f165 = L.map(
+                "map_204f14769835b8e9058a9c8fa6a9f165",
+                {
+                    center: [37.48920995826324, 126.9841186261645],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_aedc01d11c541c9c357c67e78bad31fb = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_aedc01d11c541c9c357c67e78bad31fb.addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var marker_a9109bcedf8c41761a9957527575e71b = L.marker(
+                [37.50247449176199, 126.9645367406368],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_396e16b596ae15bc757e0cd64b0cced7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6989461ec97fe46133c337437a956bd0 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_01aed7d4bd5c639542a3a2ee5e1be0f5 = $(`<div id="html_01aed7d4bd5c639542a3a2ee5e1be0f5" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 래미안원베일리점 [선택됨]</h4>             <b>아파트:</b> 래미안원베일리<br>             <b>세대수:</b> 877세대<br>             <b>거리:</b> 0.55km<br>             <b>매물수:</b> 3개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-8981-4724<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_6989461ec97fe46133c337437a956bd0.setContent(html_01aed7d4bd5c639542a3a2ee5e1be0f5);
+            
+        
+
+        marker_a9109bcedf8c41761a9957527575e71b.bindPopup(popup_6989461ec97fe46133c337437a956bd0)
+        ;
+
+        
+    
+    
+            marker_a9109bcedf8c41761a9957527575e71b.bindTooltip(
+                `<div>
+                     래미안원베일리 - 행복부동산 래미안원베일리점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a9109bcedf8c41761a9957527575e71b.setIcon(icon_396e16b596ae15bc757e0cd64b0cced7);
+            
+    
+            var circle_b7db06b92a7cb8141e1de278e04dc579 = L.circle(
+                [37.50247449176199, 126.9645367406368],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_6736db5ff20c265fa6847582ae4169ae = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e3a20e7b9174b3f9b30fbabca1b04fe5 = $(`<div id="html_e3a20e7b9174b3f9b30fbabca1b04fe5" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 래미안원베일리점</div>`)[0];
+                popup_6736db5ff20c265fa6847582ae4169ae.setContent(html_e3a20e7b9174b3f9b30fbabca1b04fe5);
+            
+        
+
+        circle_b7db06b92a7cb8141e1de278e04dc579.bindPopup(popup_6736db5ff20c265fa6847582ae4169ae)
+        ;
+
+        
+    
+    
+            var marker_461a23fd36e32aa16f1a29463abfe8df = L.marker(
+                [37.48493727907053, 126.9604897728841],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_a8ae34a186f9f89c635f504a76cdf912 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_25c7c659da536830d27d72d8a9f1d774 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_842bfd9d93450c2c80f4b336120d772d = $(`<div id="html_842bfd9d93450c2c80f4b336120d772d" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 래미안원베일리점 [선택됨]</h4>             <b>아파트:</b> 래미안원베일리<br>             <b>세대수:</b> 1882세대<br>             <b>거리:</b> 0.48km<br>             <b>매물수:</b> 13개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-6129-7501<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_25c7c659da536830d27d72d8a9f1d774.setContent(html_842bfd9d93450c2c80f4b336120d772d);
+            
+        
+
+        marker_461a23fd36e32aa16f1a29463abfe8df.bindPopup(popup_25c7c659da536830d27d72d8a9f1d774)
+        ;
+
+        
+    
+    
+            marker_461a23fd36e32aa16f1a29463abfe8df.bindTooltip(
+                `<div>
+                     래미안원베일리 - 미래공인중개사 래미안원베일리점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_461a23fd36e32aa16f1a29463abfe8df.setIcon(icon_a8ae34a186f9f89c635f504a76cdf912);
+            
+    
+            var circle_eb5a23d83914d1ee8ea564d6b74530b2 = L.circle(
+                [37.48493727907053, 126.9604897728841],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_4ad0a1b99f053b1ab79cbd449e61ceb7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c26c0ac011417887443477171667369b = $(`<div id="html_c26c0ac011417887443477171667369b" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 래미안원베일리점</div>`)[0];
+                popup_4ad0a1b99f053b1ab79cbd449e61ceb7.setContent(html_c26c0ac011417887443477171667369b);
+            
+        
+
+        circle_eb5a23d83914d1ee8ea564d6b74530b2.bindPopup(popup_4ad0a1b99f053b1ab79cbd449e61ceb7)
+        ;
+
+        
+    
+    
+            var marker_15537434c22078fc023d584c3cff0e9d = L.marker(
+                [37.44727369303322, 127.0083903908915],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_93be073b6dc4808e2ad75a3bf08089a2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b234ec89d57c645ee26772810ffdff5f = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_8998a6179295b9744b26a44239799cba = $(`<div id="html_8998a6179295b9744b26a44239799cba" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 롯데캐슬골드파크점 [선택됨]</h4>             <b>아파트:</b> 롯데캐슬골드파크<br>             <b>세대수:</b> 950세대<br>             <b>거리:</b> 0.97km<br>             <b>매물수:</b> 8개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-8151-5122<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_b234ec89d57c645ee26772810ffdff5f.setContent(html_8998a6179295b9744b26a44239799cba);
+            
+        
+
+        marker_15537434c22078fc023d584c3cff0e9d.bindPopup(popup_b234ec89d57c645ee26772810ffdff5f)
+        ;
+
+        
+    
+    
+            marker_15537434c22078fc023d584c3cff0e9d.bindTooltip(
+                `<div>
+                     롯데캐슬골드파크 - 행복부동산 롯데캐슬골드파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_15537434c22078fc023d584c3cff0e9d.setIcon(icon_93be073b6dc4808e2ad75a3bf08089a2);
+            
+    
+            var circle_8e4c7c038c1509ca0dd28a9f12f681b0 = L.circle(
+                [37.44727369303322, 127.0083903908915],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_02570553b706db2f0fa4ea3dbe869a4a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_87731c3de6cc660f0788bea25c271ecd = $(`<div id="html_87731c3de6cc660f0788bea25c271ecd" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 롯데캐슬골드파크점</div>`)[0];
+                popup_02570553b706db2f0fa4ea3dbe869a4a.setContent(html_87731c3de6cc660f0788bea25c271ecd);
+            
+        
+
+        circle_8e4c7c038c1509ca0dd28a9f12f681b0.bindPopup(popup_02570553b706db2f0fa4ea3dbe869a4a)
+        ;
+
+        
+    
+    
+            var marker_00e3ba342284dd62e27e7b8c06935c6d = L.marker(
+                [37.44738334594275, 126.9071078054727],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_be27d85d505e1accc8cbb967927f4735 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_bdfa05944ef9b961ab5cad61d69f3999 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a218380ed73415a683498eac51a1b172 = $(`<div id="html_a218380ed73415a683498eac51a1b172" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 롯데캐슬골드파크점 [선택됨]</h4>             <b>아파트:</b> 롯데캐슬골드파크<br>             <b>세대수:</b> 1154세대<br>             <b>거리:</b> 2.00km<br>             <b>매물수:</b> 2개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-9670-4108<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_bdfa05944ef9b961ab5cad61d69f3999.setContent(html_a218380ed73415a683498eac51a1b172);
+            
+        
+
+        marker_00e3ba342284dd62e27e7b8c06935c6d.bindPopup(popup_bdfa05944ef9b961ab5cad61d69f3999)
+        ;
+
+        
+    
+    
+            marker_00e3ba342284dd62e27e7b8c06935c6d.bindTooltip(
+                `<div>
+                     롯데캐슬골드파크 - 미래공인중개사 롯데캐슬골드파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_00e3ba342284dd62e27e7b8c06935c6d.setIcon(icon_be27d85d505e1accc8cbb967927f4735);
+            
+    
+            var circle_b0b6219a5c11a0a9c4b25c37f41e5b56 = L.circle(
+                [37.44738334594275, 126.9071078054727],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_52dbae2b597a9d7f917fe8c6e2596909 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9ccf513a52f13262d20edd4bbfa64a52 = $(`<div id="html_9ccf513a52f13262d20edd4bbfa64a52" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 롯데캐슬골드파크점</div>`)[0];
+                popup_52dbae2b597a9d7f917fe8c6e2596909.setContent(html_9ccf513a52f13262d20edd4bbfa64a52);
+            
+        
+
+        circle_b0b6219a5c11a0a9c4b25c37f41e5b56.bindPopup(popup_52dbae2b597a9d7f917fe8c6e2596909)
+        ;
+
+        
+    
+    
+            var marker_8bf6aeeb1c8bbac375ea85929360a4b1 = L.marker(
+                [37.40634084404878, 127.0769600839173],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_d503e60a984507b77fbfba570d74ec6a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a898ca0a8696d49bda5f81e133b6afaa = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9607ad43f18acac21bca95df2d3d8378 = $(`<div id="html_9607ad43f18acac21bca95df2d3d8378" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>드림부동산 롯데캐슬골드파크점 [선택됨]</h4>             <b>아파트:</b> 롯데캐슬골드파크<br>             <b>세대수:</b> 1806세대<br>             <b>거리:</b> 1.31km<br>             <b>매물수:</b> 12개<br>             <b>매물구간:</b> 적극<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-2536-2478<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_a898ca0a8696d49bda5f81e133b6afaa.setContent(html_9607ad43f18acac21bca95df2d3d8378);
+            
+        
+
+        marker_8bf6aeeb1c8bbac375ea85929360a4b1.bindPopup(popup_a898ca0a8696d49bda5f81e133b6afaa)
+        ;
+
+        
+    
+    
+            marker_8bf6aeeb1c8bbac375ea85929360a4b1.bindTooltip(
+                `<div>
+                     롯데캐슬골드파크 - 드림부동산 롯데캐슬골드파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8bf6aeeb1c8bbac375ea85929360a4b1.setIcon(icon_d503e60a984507b77fbfba570d74ec6a);
+            
+    
+            var circle_c37c2d822caa315ae9606b187812380c = L.circle(
+                [37.40634084404878, 127.0769600839173],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_7c33c7b96b372c5b47542dcda266ca50 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8a02cba703b9e010f80956d2fc4f1f42 = $(`<div id="html_8a02cba703b9e010f80956d2fc4f1f42" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 드림부동산 롯데캐슬골드파크점</div>`)[0];
+                popup_7c33c7b96b372c5b47542dcda266ca50.setContent(html_8a02cba703b9e010f80956d2fc4f1f42);
+            
+        
+
+        circle_c37c2d822caa315ae9606b187812380c.bindPopup(popup_7c33c7b96b372c5b47542dcda266ca50)
+        ;
+
+        
+    
+    
+            var marker_07e972416e3127002615f5a3f4154f55 = L.marker(
+                [37.42686204509052, 127.0168976035891],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_9cf67a70f97cfe37ef80472014135808 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_fdcfe3b9492e7ac41674aa721b62f883 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_e79277260e53a996de82b84083ea88a9 = $(`<div id="html_e79277260e53a996de82b84083ea88a9" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>골든부동산 롯데캐슬골드파크점 [선택됨]</h4>             <b>아파트:</b> 롯데캐슬골드파크<br>             <b>세대수:</b> 1497세대<br>             <b>거리:</b> 1.18km<br>             <b>매물수:</b> 8개<br>             <b>매물구간:</b> 보통<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-5687-4077<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_fdcfe3b9492e7ac41674aa721b62f883.setContent(html_e79277260e53a996de82b84083ea88a9);
+            
+        
+
+        marker_07e972416e3127002615f5a3f4154f55.bindPopup(popup_fdcfe3b9492e7ac41674aa721b62f883)
+        ;
+
+        
+    
+    
+            marker_07e972416e3127002615f5a3f4154f55.bindTooltip(
+                `<div>
+                     롯데캐슬골드파크 - 골든부동산 롯데캐슬골드파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_07e972416e3127002615f5a3f4154f55.setIcon(icon_9cf67a70f97cfe37ef80472014135808);
+            
+    
+            var circle_d19ceafeab809d847fc2f7d940d5c8f3 = L.circle(
+                [37.42686204509052, 127.0168976035891],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_20044949757f0489a32cf513e299fad8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d55c9029d504d42005bb7f3df5ebdf4a = $(`<div id="html_d55c9029d504d42005bb7f3df5ebdf4a" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 골든부동산 롯데캐슬골드파크점</div>`)[0];
+                popup_20044949757f0489a32cf513e299fad8.setContent(html_d55c9029d504d42005bb7f3df5ebdf4a);
+            
+        
+
+        circle_d19ceafeab809d847fc2f7d940d5c8f3.bindPopup(popup_20044949757f0489a32cf513e299fad8)
+        ;
+
+        
+    
+    
+            var marker_35b1186b1a1a35c0165b8b55a8e7fe76 = L.marker(
+                [37.55123612127939, 126.9875210342147],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_f09b4f6dc023813b393b6d2747d15288 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1e8ccc2c394156dc3e2289845d96f7b4 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_3a4e8c85ccfe5ec5039e4153e5dc1a64 = $(`<div id="html_3a4e8c85ccfe5ec5039e4153e5dc1a64" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 아크로리버파크점 [선택됨]</h4>             <b>아파트:</b> 아크로리버파크<br>             <b>세대수:</b> 1814세대<br>             <b>거리:</b> 1.85km<br>             <b>매물수:</b> 1개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-8117-3745<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_1e8ccc2c394156dc3e2289845d96f7b4.setContent(html_3a4e8c85ccfe5ec5039e4153e5dc1a64);
+            
+        
+
+        marker_35b1186b1a1a35c0165b8b55a8e7fe76.bindPopup(popup_1e8ccc2c394156dc3e2289845d96f7b4)
+        ;
+
+        
+    
+    
+            marker_35b1186b1a1a35c0165b8b55a8e7fe76.bindTooltip(
+                `<div>
+                     아크로리버파크 - 행복부동산 아크로리버파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_35b1186b1a1a35c0165b8b55a8e7fe76.setIcon(icon_f09b4f6dc023813b393b6d2747d15288);
+            
+    
+            var circle_d9ab766392af91911dc174fd7d007490 = L.circle(
+                [37.55123612127939, 126.9875210342147],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_ea37c24eb2c653e8bd3d8a99328a44fc = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7a6357b0580cf1baae71be7a86b4c0c0 = $(`<div id="html_7a6357b0580cf1baae71be7a86b4c0c0" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 아크로리버파크점</div>`)[0];
+                popup_ea37c24eb2c653e8bd3d8a99328a44fc.setContent(html_7a6357b0580cf1baae71be7a86b4c0c0);
+            
+        
+
+        circle_d9ab766392af91911dc174fd7d007490.bindPopup(popup_ea37c24eb2c653e8bd3d8a99328a44fc)
+        ;
+
+        
+    
+    
+            var marker_4c18611803d1704655a94be2233161b3 = L.marker(
+                [37.41245940158213, 126.9610397325505],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_7a874aa9c326de2699db6dd834da3bcb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a8af18ca5578aa00c30aae87c7f03c96 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_5770847debe49498b564aa3484796483 = $(`<div id="html_5770847debe49498b564aa3484796483" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 아크로리버파크점 [선택됨]</h4>             <b>아파트:</b> 아크로리버파크<br>             <b>세대수:</b> 1616세대<br>             <b>거리:</b> 0.27km<br>             <b>매물수:</b> 6개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-5759-9234<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_a8af18ca5578aa00c30aae87c7f03c96.setContent(html_5770847debe49498b564aa3484796483);
+            
+        
+
+        marker_4c18611803d1704655a94be2233161b3.bindPopup(popup_a8af18ca5578aa00c30aae87c7f03c96)
+        ;
+
+        
+    
+    
+            marker_4c18611803d1704655a94be2233161b3.bindTooltip(
+                `<div>
+                     아크로리버파크 - 미래공인중개사 아크로리버파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4c18611803d1704655a94be2233161b3.setIcon(icon_7a874aa9c326de2699db6dd834da3bcb);
+            
+    
+            var circle_956f335f52be58202afd65a83309020e = L.circle(
+                [37.41245940158213, 126.9610397325505],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_db2916d29c8c20cecf341b13b56e81f9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7deac8c7c6385c75ecff2830f6af4ce8 = $(`<div id="html_7deac8c7c6385c75ecff2830f6af4ce8" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 아크로리버파크점</div>`)[0];
+                popup_db2916d29c8c20cecf341b13b56e81f9.setContent(html_7deac8c7c6385c75ecff2830f6af4ce8);
+            
+        
+
+        circle_956f335f52be58202afd65a83309020e.bindPopup(popup_db2916d29c8c20cecf341b13b56e81f9)
+        ;
+
+        
+    
+    
+            var marker_68e44688031180de72a6d94129a81fe0 = L.marker(
+                [37.52003391311094, 126.9008876731443],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_da9dce619bf0c45b7aec7681e786dda1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_07fae161e7915c47a61bc4d5047a6c4c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_18a980d92557029d21fa2f17164f46be = $(`<div id="html_18a980d92557029d21fa2f17164f46be" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 자이엘라점 [선택됨]</h4>             <b>아파트:</b> 자이엘라<br>             <b>세대수:</b> 1379세대<br>             <b>거리:</b> 1.65km<br>             <b>매물수:</b> 17개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-9750-1034<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_07fae161e7915c47a61bc4d5047a6c4c.setContent(html_18a980d92557029d21fa2f17164f46be);
+            
+        
+
+        marker_68e44688031180de72a6d94129a81fe0.bindPopup(popup_07fae161e7915c47a61bc4d5047a6c4c)
+        ;
+
+        
+    
+    
+            marker_68e44688031180de72a6d94129a81fe0.bindTooltip(
+                `<div>
+                     자이엘라 - 행복부동산 자이엘라점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_68e44688031180de72a6d94129a81fe0.setIcon(icon_da9dce619bf0c45b7aec7681e786dda1);
+            
+    
+            var circle_c92f822d400cf6b0b4fe817f964d4679 = L.circle(
+                [37.52003391311094, 126.9008876731443],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_67e85bb75262f07ce32462826f2d23a0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4bcaa12923ffb2c3e369649a8230b347 = $(`<div id="html_4bcaa12923ffb2c3e369649a8230b347" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 자이엘라점</div>`)[0];
+                popup_67e85bb75262f07ce32462826f2d23a0.setContent(html_4bcaa12923ffb2c3e369649a8230b347);
+            
+        
+
+        circle_c92f822d400cf6b0b4fe817f964d4679.bindPopup(popup_67e85bb75262f07ce32462826f2d23a0)
+        ;
+
+        
+    
+    
+            var marker_11325436478daefdfe344ba3ef26f809 = L.marker(
+                [37.45171132484001, 126.9667390366653],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_e76b5ab5ebde3bb904069bb93a37a05f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a55f524b3c5c5c8e2edb4c93254a0235 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_39eede783373b31e4594a107ff214497 = $(`<div id="html_39eede783373b31e4594a107ff214497" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 자이엘라점 [선택됨]</h4>             <b>아파트:</b> 자이엘라<br>             <b>세대수:</b> 1608세대<br>             <b>거리:</b> 0.98km<br>             <b>매물수:</b> 12개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-1037-5808<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_a55f524b3c5c5c8e2edb4c93254a0235.setContent(html_39eede783373b31e4594a107ff214497);
+            
+        
+
+        marker_11325436478daefdfe344ba3ef26f809.bindPopup(popup_a55f524b3c5c5c8e2edb4c93254a0235)
+        ;
+
+        
+    
+    
+            marker_11325436478daefdfe344ba3ef26f809.bindTooltip(
+                `<div>
+                     자이엘라 - 미래공인중개사 자이엘라점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_11325436478daefdfe344ba3ef26f809.setIcon(icon_e76b5ab5ebde3bb904069bb93a37a05f);
+            
+    
+            var circle_b9ff0f415bf738f92a43df7fe8c1bd56 = L.circle(
+                [37.45171132484001, 126.9667390366653],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_4a51e80a733d283ee0390edb8b45003a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_61021f93d1862f694fb2840198e2656e = $(`<div id="html_61021f93d1862f694fb2840198e2656e" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 자이엘라점</div>`)[0];
+                popup_4a51e80a733d283ee0390edb8b45003a.setContent(html_61021f93d1862f694fb2840198e2656e);
+            
+        
+
+        circle_b9ff0f415bf738f92a43df7fe8c1bd56.bindPopup(popup_4a51e80a733d283ee0390edb8b45003a)
+        ;
+
+        
+    
+    
+            var marker_db0debb4cb6dee31c5f4f150117620e3 = L.marker(
+                [37.44449144593972, 127.016448268952],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_3e7f0d365639428cf05a953df0b2c599 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6a1b17309ab8c60b3e2831ce6a1d8c5d = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a761ad8cfbac593942e6d2662a7f415f = $(`<div id="html_a761ad8cfbac593942e6d2662a7f415f" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>드림부동산 자이엘라점 [선택됨]</h4>             <b>아파트:</b> 자이엘라<br>             <b>세대수:</b> 728세대<br>             <b>거리:</b> 0.43km<br>             <b>매물수:</b> 16개<br>             <b>매물구간:</b> 적극<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-7492-5545<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_6a1b17309ab8c60b3e2831ce6a1d8c5d.setContent(html_a761ad8cfbac593942e6d2662a7f415f);
+            
+        
+
+        marker_db0debb4cb6dee31c5f4f150117620e3.bindPopup(popup_6a1b17309ab8c60b3e2831ce6a1d8c5d)
+        ;
+
+        
+    
+    
+            marker_db0debb4cb6dee31c5f4f150117620e3.bindTooltip(
+                `<div>
+                     자이엘라 - 드림부동산 자이엘라점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_db0debb4cb6dee31c5f4f150117620e3.setIcon(icon_3e7f0d365639428cf05a953df0b2c599);
+            
+    
+            var circle_fd2d30bdb1907df9fc6f4854f27c067b = L.circle(
+                [37.44449144593972, 127.016448268952],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_50c6ed88f1a639c691ab7a3f577a73f5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3c122110845d03c15ad2208c873bd4e2 = $(`<div id="html_3c122110845d03c15ad2208c873bd4e2" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 드림부동산 자이엘라점</div>`)[0];
+                popup_50c6ed88f1a639c691ab7a3f577a73f5.setContent(html_3c122110845d03c15ad2208c873bd4e2);
+            
+        
+
+        circle_fd2d30bdb1907df9fc6f4854f27c067b.bindPopup(popup_50c6ed88f1a639c691ab7a3f577a73f5)
+        ;
+
+        
+    
+    
+            var marker_a74fda323c9c3740b5e38e70af3021f1 = L.marker(
+                [37.47937042168417, 127.013058427278],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_6b85ddc2c9eefbf3c19cfc30329bac6e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0bf4b0d345021fe0a1cbaf30641f97b9 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_216d95fcc41d1aeea01d0682fffa9754 = $(`<div id="html_216d95fcc41d1aeea01d0682fffa9754" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>골든부동산 자이엘라점 [선택됨]</h4>             <b>아파트:</b> 자이엘라<br>             <b>세대수:</b> 742세대<br>             <b>거리:</b> 0.27km<br>             <b>매물수:</b> 18개<br>             <b>매물구간:</b> 보통<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-7103-5549<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_0bf4b0d345021fe0a1cbaf30641f97b9.setContent(html_216d95fcc41d1aeea01d0682fffa9754);
+            
+        
+
+        marker_a74fda323c9c3740b5e38e70af3021f1.bindPopup(popup_0bf4b0d345021fe0a1cbaf30641f97b9)
+        ;
+
+        
+    
+    
+            marker_a74fda323c9c3740b5e38e70af3021f1.bindTooltip(
+                `<div>
+                     자이엘라 - 골든부동산 자이엘라점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a74fda323c9c3740b5e38e70af3021f1.setIcon(icon_6b85ddc2c9eefbf3c19cfc30329bac6e);
+            
+    
+            var circle_cc344dd9fd643bf4ec4c384c173c2ac9 = L.circle(
+                [37.47937042168417, 127.013058427278],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_5374450ec13b3f38007c9958612863d8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_78ff5f17e9a33290a178b90822badadf = $(`<div id="html_78ff5f17e9a33290a178b90822badadf" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 골든부동산 자이엘라점</div>`)[0];
+                popup_5374450ec13b3f38007c9958612863d8.setContent(html_78ff5f17e9a33290a178b90822badadf);
+            
+        
+
+        circle_cc344dd9fd643bf4ec4c384c173c2ac9.bindPopup(popup_5374450ec13b3f38007c9958612863d8)
+        ;
+
+        
+    
+    
+            var marker_2332613b969eea1c6a0a3e859127a187 = L.marker(
+                [37.56828258830147, 126.9157248398594],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_a222d190da2f580247593a01ebdee77b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0a2228c30fa8a8889a9a23ba3938a4ad = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_3e4a481354516c175df09a2b0e2a27a2 = $(`<div id="html_3e4a481354516c175df09a2b0e2a27a2" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 푸르지오시티점 [선택됨]</h4>             <b>아파트:</b> 푸르지오시티<br>             <b>세대수:</b> 1664세대<br>             <b>거리:</b> 0.95km<br>             <b>매물수:</b> 2개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-7647-5234<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_0a2228c30fa8a8889a9a23ba3938a4ad.setContent(html_3e4a481354516c175df09a2b0e2a27a2);
+            
+        
+
+        marker_2332613b969eea1c6a0a3e859127a187.bindPopup(popup_0a2228c30fa8a8889a9a23ba3938a4ad)
+        ;
+
+        
+    
+    
+            marker_2332613b969eea1c6a0a3e859127a187.bindTooltip(
+                `<div>
+                     푸르지오시티 - 행복부동산 푸르지오시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2332613b969eea1c6a0a3e859127a187.setIcon(icon_a222d190da2f580247593a01ebdee77b);
+            
+    
+            var circle_b323169ca29e2d67acf3b291b0e2b602 = L.circle(
+                [37.56828258830147, 126.9157248398594],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_3133fad4d7fba8fae86738b0b2e751c7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7509063413afa3f31dbb5bec7afd37c6 = $(`<div id="html_7509063413afa3f31dbb5bec7afd37c6" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 푸르지오시티점</div>`)[0];
+                popup_3133fad4d7fba8fae86738b0b2e751c7.setContent(html_7509063413afa3f31dbb5bec7afd37c6);
+            
+        
+
+        circle_b323169ca29e2d67acf3b291b0e2b602.bindPopup(popup_3133fad4d7fba8fae86738b0b2e751c7)
+        ;
+
+        
+    
+    
+            var marker_55ac1666a75c15b847e6b62421246ed1 = L.marker(
+                [37.57837668880241, 127.0139576774125],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_230e84ce865562e496061d2e4908fa01 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_882ee0b321fe12a69e65702982b7a74e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_0f27372511e867e044977594c18e8b54 = $(`<div id="html_0f27372511e867e044977594c18e8b54" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 푸르지오시티점 [선택됨]</h4>             <b>아파트:</b> 푸르지오시티<br>             <b>세대수:</b> 1453세대<br>             <b>거리:</b> 0.95km<br>             <b>매물수:</b> 6개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-7509-1410<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_882ee0b321fe12a69e65702982b7a74e.setContent(html_0f27372511e867e044977594c18e8b54);
+            
+        
+
+        marker_55ac1666a75c15b847e6b62421246ed1.bindPopup(popup_882ee0b321fe12a69e65702982b7a74e)
+        ;
+
+        
+    
+    
+            marker_55ac1666a75c15b847e6b62421246ed1.bindTooltip(
+                `<div>
+                     푸르지오시티 - 미래공인중개사 푸르지오시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_55ac1666a75c15b847e6b62421246ed1.setIcon(icon_230e84ce865562e496061d2e4908fa01);
+            
+    
+            var circle_3289a30d3c75ac7068e51990fbebfd9c = L.circle(
+                [37.57837668880241, 127.0139576774125],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_2906fd4def2fc0f3fc23559c0fcb3556 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ca30f4ff15b745dad02205b29414863d = $(`<div id="html_ca30f4ff15b745dad02205b29414863d" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 푸르지오시티점</div>`)[0];
+                popup_2906fd4def2fc0f3fc23559c0fcb3556.setContent(html_ca30f4ff15b745dad02205b29414863d);
+            
+        
+
+        circle_3289a30d3c75ac7068e51990fbebfd9c.bindPopup(popup_2906fd4def2fc0f3fc23559c0fcb3556)
+        ;
+
+        
+    
+    
+            var marker_935902f9fb8071fd75d0dcf6d156b01c = L.marker(
+                [37.49005353953321, 126.986656401564],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_d2d02d518245e4a0a9ea2c0ae031d10c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b43c297fc34bba8dc89fe880a986f5be = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_e4f391e37a9221f5454361ce29225bc9 = $(`<div id="html_e4f391e37a9221f5454361ce29225bc9" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>드림부동산 푸르지오시티점 [선택됨]</h4>             <b>아파트:</b> 푸르지오시티<br>             <b>세대수:</b> 1390세대<br>             <b>거리:</b> 1.82km<br>             <b>매물수:</b> 19개<br>             <b>매물구간:</b> 적극<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-8191-3368<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_b43c297fc34bba8dc89fe880a986f5be.setContent(html_e4f391e37a9221f5454361ce29225bc9);
+            
+        
+
+        marker_935902f9fb8071fd75d0dcf6d156b01c.bindPopup(popup_b43c297fc34bba8dc89fe880a986f5be)
+        ;
+
+        
+    
+    
+            marker_935902f9fb8071fd75d0dcf6d156b01c.bindTooltip(
+                `<div>
+                     푸르지오시티 - 드림부동산 푸르지오시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_935902f9fb8071fd75d0dcf6d156b01c.setIcon(icon_d2d02d518245e4a0a9ea2c0ae031d10c);
+            
+    
+            var circle_92ae59f7662cc12747b955a98dcff94a = L.circle(
+                [37.49005353953321, 126.986656401564],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_d03a391ac3c26714d908be58fdae9aaf = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a53375ffdead11dcc074d206e8cc5b29 = $(`<div id="html_a53375ffdead11dcc074d206e8cc5b29" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 드림부동산 푸르지오시티점</div>`)[0];
+                popup_d03a391ac3c26714d908be58fdae9aaf.setContent(html_a53375ffdead11dcc074d206e8cc5b29);
+            
+        
+
+        circle_92ae59f7662cc12747b955a98dcff94a.bindPopup(popup_d03a391ac3c26714d908be58fdae9aaf)
+        ;
+
+        
+    
+    
+            var marker_1e0e8bcc897d65b23a917b794d57ea61 = L.marker(
+                [37.53979668680455, 126.99459914236],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_b2405a041f9ef8a615c420efec10e833 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0e708b2fc1b438833c5b9257730609e1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_434f927eba6f06bc692b5c0cb460eab9 = $(`<div id="html_434f927eba6f06bc692b5c0cb460eab9" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 힐스테이트리버시티점 [선택됨]</h4>             <b>아파트:</b> 힐스테이트리버시티<br>             <b>세대수:</b> 1807세대<br>             <b>거리:</b> 0.82km<br>             <b>매물수:</b> 17개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-6185-9083<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_0e708b2fc1b438833c5b9257730609e1.setContent(html_434f927eba6f06bc692b5c0cb460eab9);
+            
+        
+
+        marker_1e0e8bcc897d65b23a917b794d57ea61.bindPopup(popup_0e708b2fc1b438833c5b9257730609e1)
+        ;
+
+        
+    
+    
+            marker_1e0e8bcc897d65b23a917b794d57ea61.bindTooltip(
+                `<div>
+                     힐스테이트리버시티 - 행복부동산 힐스테이트리버시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1e0e8bcc897d65b23a917b794d57ea61.setIcon(icon_b2405a041f9ef8a615c420efec10e833);
+            
+    
+            var circle_1e92da38f03cc0f157eca6aefdcfd001 = L.circle(
+                [37.53979668680455, 126.99459914236],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_4a0039377f2c7fa030fa051d312ca79c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e3f729dd33f9a81d0243cd656a099a83 = $(`<div id="html_e3f729dd33f9a81d0243cd656a099a83" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 힐스테이트리버시티점</div>`)[0];
+                popup_4a0039377f2c7fa030fa051d312ca79c.setContent(html_e3f729dd33f9a81d0243cd656a099a83);
+            
+        
+
+        circle_1e92da38f03cc0f157eca6aefdcfd001.bindPopup(popup_4a0039377f2c7fa030fa051d312ca79c)
+        ;
+
+        
+    
+    
+            var marker_b049f960515a519d9996cc20bd8f42bc = L.marker(
+                [37.53492003688449, 126.9503165898792],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_de726b9b015b8fe865e1a55e3b46d9b0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7cf289abe323c4610d05fdc2d4bf4db1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_93ed90c4bd2b4b6c0a509ca9c8c3380f = $(`<div id="html_93ed90c4bd2b4b6c0a509ca9c8c3380f" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 힐스테이트리버시티점 [선택됨]</h4>             <b>아파트:</b> 힐스테이트리버시티<br>             <b>세대수:</b> 1126세대<br>             <b>거리:</b> 0.92km<br>             <b>매물수:</b> 9개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-9188-7527<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_7cf289abe323c4610d05fdc2d4bf4db1.setContent(html_93ed90c4bd2b4b6c0a509ca9c8c3380f);
+            
+        
+
+        marker_b049f960515a519d9996cc20bd8f42bc.bindPopup(popup_7cf289abe323c4610d05fdc2d4bf4db1)
+        ;
+
+        
+    
+    
+            marker_b049f960515a519d9996cc20bd8f42bc.bindTooltip(
+                `<div>
+                     힐스테이트리버시티 - 미래공인중개사 힐스테이트리버시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b049f960515a519d9996cc20bd8f42bc.setIcon(icon_de726b9b015b8fe865e1a55e3b46d9b0);
+            
+    
+            var circle_6e44f679fac847cec7fb4a7e95475a97 = L.circle(
+                [37.53492003688449, 126.9503165898792],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_ce8f07154f2a34a07f3c0ec4afb9c13a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a34d2215b973fc9ec008349276b9a8f8 = $(`<div id="html_a34d2215b973fc9ec008349276b9a8f8" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 힐스테이트리버시티점</div>`)[0];
+                popup_ce8f07154f2a34a07f3c0ec4afb9c13a.setContent(html_a34d2215b973fc9ec008349276b9a8f8);
+            
+        
+
+        circle_6e44f679fac847cec7fb4a7e95475a97.bindPopup(popup_ce8f07154f2a34a07f3c0ec4afb9c13a)
+        ;
+
+        
+    
+    
+            var marker_2761d5231035ef60747442ac60e5c176 = L.marker(
+                [37.51977538102805, 127.0728040496897],
+                {
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var icon_b7eb5d7ff35af333c930bc533306731d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2f7f473d2ef5dba9406bb0e347208a13 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_eebb2f83af307a93403d21e52b5ae301 = $(`<div id="html_eebb2f83af307a93403d21e52b5ae301" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>드림부동산 힐스테이트리버시티점 [선택됨]</h4>             <b>아파트:</b> 힐스테이트리버시티<br>             <b>세대수:</b> 1701세대<br>             <b>거리:</b> 1.63km<br>             <b>매물수:</b> 4개<br>             <b>매물구간:</b> 적극<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-8063-5850<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_2f7f473d2ef5dba9406bb0e347208a13.setContent(html_eebb2f83af307a93403d21e52b5ae301);
+            
+        
+
+        marker_2761d5231035ef60747442ac60e5c176.bindPopup(popup_2f7f473d2ef5dba9406bb0e347208a13)
+        ;
+
+        
+    
+    
+            marker_2761d5231035ef60747442ac60e5c176.bindTooltip(
+                `<div>
+                     힐스테이트리버시티 - 드림부동산 힐스테이트리버시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2761d5231035ef60747442ac60e5c176.setIcon(icon_b7eb5d7ff35af333c930bc533306731d);
+            
+    
+            var circle_cdb5a3bb1a014a02559e89edbd0d41b5 = L.circle(
+                [37.51977538102805, 127.0728040496897],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+        var popup_cf0f248e506eef9319a5efaab9af3df1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6b8d311898c647dfdb7cc0c163e1a7fc = $(`<div id="html_6b8d311898c647dfdb7cc0c163e1a7fc" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 드림부동산 힐스테이트리버시티점</div>`)[0];
+                popup_cf0f248e506eef9319a5efaab9af3df1.setContent(html_6b8d311898c647dfdb7cc0c163e1a7fc);
+            
+        
+
+        circle_cdb5a3bb1a014a02559e89edbd0d41b5.bindPopup(popup_cf0f248e506eef9319a5efaab9af3df1)
+        ;
+
+        
+    
+    
+            var tile_layer_1a586b20186285927e8de163731e81db = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detect_retina": false, "max_native_zoom": 19, "max_zoom": 19, "min_zoom": 0, "no_wrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+            var mini_map_09e8d0b7bce0bc8566b0718fc84ae862 = new L.Control.MiniMap(
+                tile_layer_1a586b20186285927e8de163731e81db,
+                {
+  "position": "bottomright",
+  "width": 150,
+  "height": 150,
+  "collapsedWidth": 25,
+  "collapsedHeight": 25,
+  "zoomLevelOffset": -5,
+  "centerFixed": false,
+  "zoomAnimation": false,
+  "toggleDisplay": false,
+  "autoToggleDisplay": false,
+  "minimized": false,
+}
+            );
+            map_204f14769835b8e9058a9c8fa6a9f165.addControl(mini_map_09e8d0b7bce0bc8566b0718fc84ae862);
+        
+    
+            L.control.fullscreen(
+                {
+  "position": "topleft",
+  "title": "Full Screen",
+  "titleCancel": "Exit Full Screen",
+  "forceSeparateButton": false,
+}
+            ).addTo(map_204f14769835b8e9058a9c8fa6a9f165);
+        
+    
+            var measure_control_dbc46ffbed29aa1dd0e629847fd5daf9 = new L.Control.Measure(
+                {
+  "position": "topright",
+  "primaryLengthUnit": "meters",
+  "secondaryLengthUnit": "miles",
+  "primaryAreaUnit": "sqmeters",
+  "secondaryAreaUnit": "acres",
+});
+            map_204f14769835b8e9058a9c8fa6a9f165.addControl(measure_control_dbc46ffbed29aa1dd0e629847fd5daf9);
+
+            // Workaround for using this plugin with Leaflet>=1.8.0
+            // https://github.com/ljagis/leaflet-measure/issues/171
+            L.Control.Measure.include({
+                _setCaptureMarkerIcon: function () {
+                    // disable autopan
+                    this._captureMarker.options.autoPanOnFocus = false;
+                    // default function
+                    this._captureMarker.setIcon(
+                        L.divIcon({
+                            iconSize: this._map.getSize().multiplyBy(2)
+                        })
+                    );
+                },
+            });
+
+        
+</script>
+</html>
