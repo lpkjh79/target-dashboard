@@ -1,1730 +1,1475 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>아파트별 타겟 사무소 목록</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_6a90640c4cc921b2b99060ce3f519d50 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
         
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            color: white;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-        
-        .summary {
-            text-align: center;
-            color: white;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        
-        .search-box {
-            background: white;
-            border-radius: 25px;
-            padding: 10px 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .search-box input {
-            width: 100%;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            padding: 5px;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #764ba2;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        .apartment-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        
-        .apartment-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .apartment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .apartment-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .apartment-id {
-            font-size: 12px;
-            color: #999;
-            background: #f5f5f5;
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-        
-        .office-list {
-            margin-top: 10px;
-        }
-        
-        .office-item {
-            padding: 12px;
-            margin-bottom: 8px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            position: relative;
-            transition: all 0.3s;
-        }
-        
-        .office-item.primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .office-item:hover {
-            transform: translateX(5px);
-        }
-        
-        .office-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .primary-badge {
-            background: gold;
-            color: #333;
-            padding: 2px 8px;
-            border-radius: 5px;
-            font-size: 11px;
-            margin-left: 10px;
-        }
-        
-        .office-details {
-            font-size: 13px;
-            color: #666;
-            line-height: 1.5;
-        }
-        
-        .office-item.primary .office-details {
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .office-link {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 5px 12px;
-            background: #03c75a;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 12px;
-            transition: background 0.3s;
-        }
-        
-        .office-link:hover {
-            background: #02a048;
-        }
-        
-        .segment-tag {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 11px;
-            margin-left: 5px;
-            font-weight: bold;
-        }
-        
-        .segment-절박 { background: #ffebee; color: #c62828; }
-        .segment-개척 { background: #fff3e0; color: #e65100; }
-        .segment-적극 { background: #e8f5e9; color: #2e7d32; }
-        .segment-보통 { background: #e3f2fd; color: #1565c0; }
-        .segment-안정 { background: #f3e5f5; color: #6a1b9a; }
-        .segment-포화 { background: #eceff1; color: #455a64; }
-        
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            padding: 8px 16px;
-            background: white;
-            border: 2px solid #764ba2;
-            border-radius: 20px;
-            color: #764ba2;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-        
-        .filter-btn.active {
-            background: #764ba2;
-            color: white;
-        }
-        
-        .filter-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: white;
-            font-size: 18px;
-        }
-        
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 40px;
-            padding: 20px;
-            font-size: 12px;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/ljagis/leaflet-measure@2.1.7/dist/leaflet-measure.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ljagis/leaflet-measure@2.1.7/dist/leaflet-measure.min.css"/>
 </head>
 <body>
-    <div class="container">
-        <h1>🏢 아파트별 타겟 사무소</h1>
-        <div class="summary">
-            2025년 08월 29일 기준 | 총 42개 단지, 42개 사무소
-        </div>
+    
+    
+    <div style="position: fixed; 
+                bottom: 50px; right: 50px; width: 220px; height: auto;
+                background-color: white; z-index:9999; font-size:14px;
+                border:2px solid grey; border-radius:5px; padding: 10px">
+        <p style="margin: 5px;"><b>SMS 발송대상 지도</b></p>
+        <hr style="margin: 5px;">
+        <p style="margin: 5px;"><b>사무소:</b></p>
+        <p style="margin: 5px;"><span style="color:blue">●</span> 선택된 사무소</p>
         
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="아파트명 또는 사무소명 검색..." onkeyup="searchApartments()">
-        </div>
-        
-
-        <div class="map-section" style="margin: 20px 0; text-align: center;">
-            <button id="mapButton" class="map-btn" style="
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                padding: 12px 30px;
-                border-radius: 25px;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
-                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-                transition: all 0.3s ease;
-                ">
-                🗺️ 지도 시각화 보기
-            </button>
-        </div>
-
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value">42</div>
-                <div class="stat-label">총 아파트</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">42</div>
-                <div class="stat-label">총 사무소</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">0</div>
-                <div class="stat-label">1순위 선정</div>
-            </div>
-        </div>
-        
-        <div class="filter-buttons">
-            <button class="filter-btn active" onclick="filterBySegment('all')">전체</button>
-            <button class="filter-btn" onclick="filterBySegment('절박')">절박</button>
-            <button class="filter-btn" onclick="filterBySegment('개척')">개척</button>
-            <button class="filter-btn" onclick="filterBySegment('적극')">적극</button>
-            <button class="filter-btn" onclick="filterBySegment('보통')">보통</button>
-            <button class="filter-btn" onclick="filterBySegment('안정')">안정</button>
-            <button class="filter-btn" onclick="filterBySegment('포화')">포화</button>
-        </div>
-        
-        <div id="apartmentList">
-
-            <div class="apartment-card" data-name="굴화주공(1단지)+굴화주공(2단지)">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">굴화주공(1단지)+굴화주공(2단지)</span>
-                        <span class="apartment-id">#8633</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8633" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/ygsf3580', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            메르디앙공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-3580-0282<br>
-                            🏘️ 매물 14개<br>
-                            📍 울산시 울주군 범서읍 굴화리 36-9 1층
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="다운+다운동아큰마을">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">다운+다운동아큰마을</span>
-                        <span class="apartment-id">#8736</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8736" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/megar5453', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            다운동아메가부동산중개
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-5525-0274<br>
-                            🏘️ 매물 25개<br>
-                            📍 울산광역시 중구 다운동 702 다운 동아 큰마을아파트 상가동 101호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="대공원대명루첸">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">대공원대명루첸</span>
-                        <span class="apartment-id">#28831</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/28831" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/yoonsunp8989', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            라엘에스스마일부동산중개사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-9275-9570<br>
-                            🏘️ 매물 36개<br>
-                            📍 울산시 남구 신정동 800-4 1층
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="대왕암엘크루">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">대왕암엘크루</span>
-                        <span class="apartment-id">#25630</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/25630" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="절박" onclick="window.open('https://m.land.naver.com/agency/info/wolsey500', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            프런티어공인중개사사무소
-                            
-                            <span class="segment-절박 segment-tag">절박</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-5715-6673<br>
-                            🏘️ 매물 3개<br>
-                            📍 울산광역시 동구 방어동 58-2 대왕암CGV블루스퀘어 112호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="더샵시에르네">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">더샵시에르네</span>
-                        <span class="apartment-id">#1103037</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/1103037" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/l2825070', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            서한이다음공인중개사사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-9630-4791<br>
-                            🏘️ 매물 48개<br>
-                            📍 울산시 중구 복산동 779 번영로 서한 이다음 1단지 401동(상가동) 103호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="덕신동백+온산동원+온산덕신사원">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">덕신동백+온산동원+온산덕신사원</span>
-                        <span class="apartment-id">#8776</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8776" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="포화" onclick="window.open('https://m.land.naver.com/agency/info/nanadw4834', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            덕신대우부동산중개사무소
-                            
-                            <span class="segment-포화 segment-tag">포화</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-8356-6570<br>
-                            🏘️ 매물 204개<br>
-                            📍 울산시 울주군 온산읍 덕신리 1360-4 1층
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="동문굿모닝힐+구영1차우미린+구영2차푸르지오+호반베르디움+구영2차우미린+구영지구푸르지오2단지">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">동문굿모닝힐+구영1차우미린+구영2차푸르지오+호반베르디움+구영2차우미린+구영지구푸르지오2단지</span>
-                        <span class="apartment-id">#15248</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/15248" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/qufquf11061', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            천금공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-9699-0719<br>
-                            🏘️ 매물 11개<br>
-                            📍 울산광역시 울주군 범서읍 구영리 208 풍경채 상가동 101호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="동부+신정현대홈타운(2단지)+신성미소지움+신정현대홈타운(1단지)+신정현대홈타운(3단지)+대현더샵(2단지)+번영로하늘채센트럴파크+울산번영로두산위브+달동삼성+신정현대홈타운(4단지)+더샵번영센트로+쌍용스윗닷홈+야음신선">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">동부+신정현대홈타운(2단지)+신성미소지움+신정현대홈타운(1단지)+신정현대홈타운(3단지)+대현더샵(2단지)+번영로하늘채센트럴파크+울산번영로두산위브+달동삼성+신정현대홈타운(4단지)+더샵번영센트로+쌍용스윗닷홈+야음신선</span>
-                        <span class="apartment-id">#8566</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8566" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/m3118022', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            더샵정직한부동산중개사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-2479-0533<br>
-                            🏘️ 매물 45개<br>
-                            📍 울산시 남구 야음동 942 시티프라디움 근생3동 106호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="롯데캐슬골드+라엘에스+힐스테이트수암(1단지)+일동미라주">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">롯데캐슬골드+라엘에스+힐스테이트수암(1단지)+일동미라주</span>
-                        <span class="apartment-id">#15560</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/15560" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="개척" onclick="window.open('https://m.land.naver.com/agency/info/2680962', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            한아름부동산중개사무소
-                            
-                            <span class="segment-개척 segment-tag">개척</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-8959-0962<br>
-                            🏘️ 매물 4개<br>
-                            📍 울산시 남구 야음동 881 롯데캐슬2단지아파트 일반상가 103호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="문수데시앙1단지">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">문수데시앙1단지</span>
-                        <span class="apartment-id">#27129</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/27129" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/kmbb1104', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            율리공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-3506-1276<br>
-                            🏘️ 매물 14개<br>
-                            📍 울산시 울주군 청량읍 율리 1472-1 문수데시앙1단지 상가동 203호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="문수로2차ipark(1단지)">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">문수로2차IPARK(1단지)</span>
-                        <span class="apartment-id">#24143</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/24143" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/minjiny11', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            에뜰정원공인중개사사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-6777-6559<br>
-                            🏘️ 매물 32개<br>
-                            📍 울산광역시 울주군 청량읍 덕하리 645 상가동 108호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="문수로ipark(2단지)+문수로ipark(1단지)">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">문수로IPARK(2단지)+문수로IPARK(1단지)</span>
-                        <span class="apartment-id">#13197</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/13197" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="개척" onclick="window.open('https://m.land.naver.com/agency/info/jisa0708', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            뉴체크부동산중개사무소
-                            
-                            <span class="segment-개척 segment-tag">개척</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-9488-0768<br>
-                            🏘️ 매물 5개<br>
-                            📍 울산시 남구 신정동 1640-6 1동 1층 B1-105호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="문수비스타동원">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">문수비스타동원</span>
-                        <span class="apartment-id">#499302</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/499302" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/anrj7901', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            문수동원APT부동산중개사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-9692-8888<br>
-                            🏘️ 매물 39개<br>
-                            📍 울산시 남구 무거동 1184-1 문수동원비스타 상가 201동 105호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="번영로레벤투스">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">번영로레벤투스</span>
-                        <span class="apartment-id">#32668</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/32668" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/hjzlove00', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            태화송부동산중개사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-2814-5842<br>
-                            🏘️ 매물 49개<br>
-                            📍 울산시 남구 달동 1341-1 3층
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="번영로센트리지+번영로롯데캐슬센트럴스카이(주상복합)">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">번영로센트리지+번영로롯데캐슬센트럴스카이(주상복합)</span>
-                        <span class="apartment-id">#312330</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/312330" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/kindyujin1141', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            친절한부동산중개사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 052-245-1141<br>
-                            🏘️ 매물 12개<br>
-                            📍 울산시 중구 복산동 460-72 5단지 1상가 105호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="벽산늘푸른+화봉휴먼시아+lg진로+동아,청구">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">벽산늘푸른+화봉휴먼시아+LG진로+동아,청구</span>
-                        <span class="apartment-id">#8799</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8799" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="포화" onclick="window.open('https://m.land.naver.com/agency/info/dnddl1971', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            은성공인중개사사무소
-                            
-                            <span class="segment-포화 segment-tag">포화</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-4889-1999<br>
-                            🏘️ 매물 75개<br>
-                            📍 울산시 북구 연암동 370 엘지진로아파트 상가동 105호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="선경2차+울산유곡푸르지오+선경(1차)+유곡이편한세상+울산우정에피트+우정동한양립스더센트럴">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">선경2차+울산유곡푸르지오+선경(1차)+유곡이편한세상+울산우정에피트+우정동한양립스더센트럴</span>
-                        <span class="apartment-id">#8700</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8700" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/rhthdud090909', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            한양립스공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-4431-2660<br>
-                            🏘️ 매물 15개<br>
-                            📍 울산시 중구 우정동 271-28 101호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="세양청구마을+아데라움">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">세양청구마을+아데라움</span>
-                        <span class="apartment-id">#8540</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8540" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/jmh36741', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            삼산탑부동산중개사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-5446-4593<br>
-                            🏘️ 매물 22개<br>
-                            📍 울산광역시 남구 삼산동 182-1 아데라움아파트 109동 101호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="약사아이파크+래미안1차+래미안2차(4단지)">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">약사아이파크+래미안1차+래미안2차(4단지)</span>
-                        <span class="apartment-id">#28840</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/28840" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/k2911669', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            약사백곰부동산중개사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-4488-5971<br>
-                            🏘️ 매물 43개<br>
-                            📍 울산시 중구 약사동 1101 상가동 109호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="에일린의뜰2차">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">에일린의뜰2차</span>
-                        <span class="apartment-id">#25580</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/25580" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/bag2122028', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            대경복덕방부동산공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-4019-9800<br>
-                            🏘️ 매물 18개<br>
-                            📍 울산광역시 중구 장현동 173-3 1층
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="영남알프스타운">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">영남알프스타운</span>
-                        <span class="apartment-id">#28441</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/28441" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/9124588', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            영남알프스부동산공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-6630-0069<br>
-                            🏘️ 매물 23개<br>
-                            📍 울산광역시 울주군 삼남읍 교동리 1678 영남알프스타운아파트 125동 101호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="온양서희스타힐스">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">온양서희스타힐스</span>
-                        <span class="apartment-id">#30366</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/30366" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/tjcksrns3002', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            한양립스부동산중개사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-2827-3002<br>
-                            🏘️ 매물 14개<br>
-                            📍 울산광역시 울주군 온양읍 발리 523-1 1동 101호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="우정아이파크+타워더모스트우정혁신도시">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">우정아이파크+타워더모스트우정혁신도시</span>
-                        <span class="apartment-id">#23889</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/23889" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="포화" onclick="window.open('https://m.land.naver.com/agency/info/dimplez1000', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            김현호부동산공인중개사사무소
-                            
-                            <span class="segment-포화 segment-tag">포화</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-5567-1379<br>
-                            🏘️ 매물 177개<br>
-                            📍 울산시 중구 우정동 529 S229호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="울산뉴시티에일린의뜰2차+울산뉴시티에일린의뜰1차">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">울산뉴시티에일린의뜰2차+울산뉴시티에일린의뜰1차</span>
-                        <span class="apartment-id">#437131</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/437131" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/djswn810415', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            에뜰정원부동산중개사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-9212-2740<br>
-                            🏘️ 매물 22개<br>
-                            📍 울산시 울주군 청량읍 덕하리 645 뉴시티에일린의뜰1차 상가동 108호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="울산문수산더샵+굴화강변월드메르디앙+무거현대+신복현대+문수산동원로얄듀크">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">울산문수산더샵+굴화강변월드메르디앙+무거현대+신복현대+문수산동원로얄듀크</span>
-                        <span class="apartment-id">#25273</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/25273" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/artemisoki78', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            문수산더샵공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-9583-5815<br>
-                            🏘️ 매물 13개<br>
-                            📍 울산시 울주군 범서읍 굴화리 752-3 1층 103호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="울산블루마시티서희스타힐스블루원+울산블루마시티푸르지오(1차)+힐스테이트강동">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">울산블루마시티서희스타힐스블루원+울산블루마시티푸르지오(1차)+힐스테이트강동</span>
-                        <span class="apartment-id">#28802</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/28802" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/minalee4025', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            미나리부동산공인중개사사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 052-911-7177<br>
-                            🏘️ 매물 40개<br>
-                            📍 울산광역시 북구 산하동 977-14 블루마시티 효성해링턴 플레이스 1단지 상가동 118호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="울산송정반도유보라아이비파크+울산송정제일풍경채레이크뷰">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">울산송정반도유보라아이비파크+울산송정제일풍경채레이크뷰</span>
-                        <span class="apartment-id">#35319</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/35319" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/dron3738', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            드론부동산공인중개사사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-5789-6857<br>
-                            🏘️ 매물 35개<br>
-                            📍 울산광역시 북구 송정동 1232-1 108호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="울산신정푸르지오+강변센트럴하이츠">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">울산신정푸르지오+강변센트럴하이츠</span>
-                        <span class="apartment-id">#24043</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/24043" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/joeunzip2200', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            좋은집부동산중개사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-2453-2300<br>
-                            🏘️ 매물 44개<br>
-                            📍 울산시 남구 신정동 318 울산신정푸르지오 502동 101호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="울산오토밸리로줌파크+중산디아채+유스타시티일동미라주더스타1단지">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">울산오토밸리로줌파크+중산디아채+유스타시티일동미라주더스타1단지</span>
-                        <span class="apartment-id">#30095</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/30095" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/jysjm1013', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            줌파크부동산공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-8580-3562<br>
-                            🏘️ 매물 26개<br>
-                            📍 울산시 북구 중산동 1277-1 오토밸리로Zoom파크 근린생활시설동 104호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="울산태왕아너스퍼스티안">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">울산태왕아너스퍼스티안</span>
-                        <span class="apartment-id">#49203</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/49203" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/bu89244', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            금아드림팰리스공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-3037-8924<br>
-                            🏘️ 매물 16개<br>
-                            📍 울산시 울주군 삼남읍 신화리 1609 금아드림팰리스 상가 201동 114호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="월드메르디앙월드시티(1단지)+드림인시티에일린의뜰1차+드림인시티에일린의뜰2차">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">월드메르디앙월드시티(1단지)+드림인시티에일린의뜰1차+드림인시티에일린의뜰2차</span>
-                        <span class="apartment-id">#338938</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/338938" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/ssg63790', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            신세계부동산공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-6658-6379<br>
-                            🏘️ 매물 15개<br>
-                            📍 울산시 북구 매곡동 233 상가동 106호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="월드메르디앙월드시티(2단지)+오토밸리로효성해링턴플레이스+신천효성해링턴플레이스+매곡현대+매곡푸르지오(1단지)">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">월드메르디앙월드시티(2단지)+오토밸리로효성해링턴플레이스+신천효성해링턴플레이스+매곡현대+매곡푸르지오(1단지)</span>
-                        <span class="apartment-id">#338319</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/338319" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/guramusa1', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            솔루션공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-6609-4043<br>
-                            🏘️ 매물 23개<br>
-                            📍 울산광역시 북구 매곡동 572 현대파크맨션 111동 102호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="이편한세상강변">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">이편한세상강변</span>
-                        <span class="apartment-id">#24217</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/24217" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/2810050', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            스카이부동산중개
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-4590-2426<br>
-                            🏘️ 매물 26개<br>
-                            📍 울산시 중구 반구동 570-1
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="이편한세상전하(1,2단지)+전하푸르지오(1,2단지)+전하아이파크(1,2단지)+전하대경넥스빌+전하현대홈타운">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">이편한세상전하(1,2단지)+전하푸르지오(1,2단지)+전하아이파크(1,2단지)+전하대경넥스빌+전하현대홈타운</span>
-                        <span class="apartment-id">#489088</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/489088" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/jh3602jhjh', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            스마트공인중개사사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-5500-4938<br>
-                            🏘️ 매물 39개<br>
-                            📍 울산시 동구 전하동 301-45 102호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="진영동부">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">진영동부</span>
-                        <span class="apartment-id">#8720</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8720" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/2602111', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            꿈에부동산중개사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-5771-1107<br>
-                            🏘️ 매물 20개<br>
-                            📍 울산시 중구 태화동 449-1 102호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="평창리비에르3차">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">평창리비에르3차</span>
-                        <span class="apartment-id">#26814</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/26814" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="개척" onclick="window.open('https://m.land.naver.com/agency/info/ellenana1', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            부국부동산공인중개사사무소
-                            
-                            <span class="segment-개척 segment-tag">개척</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-5649-6801<br>
-                            🏘️ 매물 10개<br>
-                            📍 울산시 북구 명촌동 697-15 울산강변효성해링턴플레이스 근린생활시설-2동 121호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="현대(삼산)+삼산선경+평창3차현대+현대(삼신)+평창2차현대">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">현대(삼산)+삼산선경+평창3차현대+현대(삼신)+평창2차현대</span>
-                        <span class="apartment-id">#8537</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8537" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="안정" onclick="window.open('https://m.land.naver.com/agency/info/aciny0610', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            선경부동산중개사무소
-                            
-                            <span class="segment-안정 segment-tag">안정</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-2125-0647<br>
-                            🏘️ 매물 57개<br>
-                            📍 울산시 남구 삼산동 1461-1 상가동 1층 1호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="현대+울산온양일동미라주">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">현대+울산온양일동미라주</span>
-                        <span class="apartment-id">#8782</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8782" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/rnjsthwkd11', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            행복공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-7501-5539<br>
-                            🏘️ 매물 11개<br>
-                            📍 울산광역시 울주군 온양읍 대안리 750 일동미라주더스타 111동 108호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="현대비치">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">현대비치</span>
-                        <span class="apartment-id">#8655</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8655" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/maeya11033', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            오션공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-8692-1103<br>
-                            🏘️ 매물 27개<br>
-                            📍 울산시 동구 방어동 1135-3 1층
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="현대패밀리동부">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">현대패밀리동부</span>
-                        <span class="apartment-id">#8644</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8644" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/2529312', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            친절한공인중개사사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 052-252-9312<br>
-                            🏘️ 매물 34개<br>
-                            📍 울산시 동구 동부동 327-8
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="현대패밀리서부+서부성원상떼빌+신영울산지웰시티자이1단지+신영울산지웰시티자이2단지+현대패밀리명덕(1차)">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">현대패밀리서부+서부성원상떼빌+신영울산지웰시티자이1단지+신영울산지웰시티자이2단지+현대패밀리명덕(1차)</span>
-                        <span class="apartment-id">#8662</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/8662" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="보통" onclick="window.open('https://m.land.naver.com/agency/info/sunju-0701', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            자이탑부동산공인중개사사무소
-                            
-                            <span class="segment-보통 segment-tag">보통</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-7728-4252<br>
-                            🏘️ 매물 36개<br>
-                            📍 울산광역시 동구 서부동 1055 신영울산지웰시티자이2단지 1동 B205호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="apartment-card" data-name="힐스테이트이스턴베이+대송현대(1차)+현대(파라다이스1차)">
-                <div class="apartment-header">
-                    <div>
-                        <span class="apartment-name">힐스테이트이스턴베이+대송현대(1차)+현대(파라다이스1차)</span>
-                        <span class="apartment-id">#27723</span>
-                    </div>
-                    <a href="https://m.land.naver.com/complex/info/27723" target="_blank" style="text-decoration: none;">
-                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
-                    </a>
-                </div>
-                
-                <div class="office-list">
-
-                    <div class="office-item" data-segment="적극" onclick="window.open('https://m.land.naver.com/agency/info/gnwrtla', '_blank')" style="cursor: pointer;">
-                        <div class="office-name">
-                            시향공인중개사사무소
-                            
-                            <span class="segment-적극 segment-tag">적극</span>
-                        </div>
-                        <div class="office-details">
-                            📞 010-4757-3925<br>
-                            🏘️ 매물 21개<br>
-                            📍 울산시 동구 화정동 851-6 대하크리스탈 상가동 101호
-                        </div>
-                        <div style="margin-top: 8px; color: #03c75a; font-size: 12px;">
-                            ▶️ 네이버 부동산에서 보기
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-        
-        <div class="footer">
-            © 2024 부동산 타겟 분석 시스템 | Powered by Target Analyzer
-        </div>
+        <hr style="margin: 5px;">
+        <p style="margin: 5px;"><b>표시:</b></p>
+        <p style="margin: 5px;">⭕ 0.5km 클러스터 반경</p>
+        <p style="margin: 5px;"><span style="color:red">―</span> 거리 위반 (0.50km 미만)</p>
     </div>
     
-    <script>
-        function searchApartments() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.getElementsByClassName('apartment-card');
-            
-            for (let card of cards) {
-                const name = card.getAttribute('data-name');
-                const offices = card.getElementsByClassName('office-item');
-                let hasMatch = name.includes(input);
-                
-                if (!hasMatch) {
-                    for (let office of offices) {
-                        if (office.textContent.toLowerCase().includes(input)) {
-                            hasMatch = true;
-                            break;
-                        }
-                    }
-                }
-                
-                card.style.display = hasMatch ? 'block' : 'none';
-            }
-        }
+    
+    <div style="position: fixed; 
+                top: 10px; right: 10px; width: 220px; height: auto;
+                background-color: white; z-index:9999; font-size:12px;
+                border:2px solid grey; border-radius:5px; padding: 10px">
+        <p style="margin: 5px;"><b>통계</b></p>
+        <p style="margin: 5px;">클러스터 거리: 0.5km</p>
+        <p style="margin: 5px;">선택된 사무소: 18개</p>
+        <p style="margin: 5px;">제외된 사무소: 0개</p>
+        <p style="margin: 5px;">최소 거리: 1748m</p>
+        <p style="margin: 5px;">0.50km 이내: 0건</p>
         
-        function filterBySegment(segment) {
-            const cards = document.getElementsByClassName('apartment-card');
-            const buttons = document.getElementsByClassName('filter-btn');
-            
-            // 버튼 활성화 상태 변경
-            for (let btn of buttons) {
-                btn.classList.remove('active');
-                if (btn.textContent === segment || (segment === 'all' && btn.textContent === '전체')) {
-                    btn.classList.add('active');
-                }
-            }
-            
-            // 카드 필터링
-            for (let card of cards) {
-                if (segment === 'all') {
-                    card.style.display = 'block';
-                } else {
-                    const offices = card.getElementsByClassName('office-item');
-                    let hasSegment = false;
-                    
-                    for (let office of offices) {
-                        if (office.getAttribute('data-segment') === segment) {
-                            hasSegment = true;
-                            break;
-                        }
-                    }
-                    
-                    card.style.display = hasSegment ? 'block' : 'none';
-                }
-            }
-        }
+    </div>
+    
+    
+            <div class="folium-map" id="map_6a90640c4cc921b2b99060ce3f519d50" ></div>
         
-        // 지도 URL 설정
-        window.mapVisualizationUrl = '{map_url if map_url else "#"}';
-        
-        // 지도 버튼 클릭 이벤트
-        document.getElementById('mapButton').addEventListener('click', function() {
-            const mapUrl = window.mapVisualizationUrl;
-            if (mapUrl !== '#') {
-                window.open(mapUrl, '_blank');
-            } else {
-                alert('지도 시각화가 아직 준비되지 않았습니다.');
-            }
-        });
-        
-        // 마우스 호버 효과
-        document.getElementById('mapButton').addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
-        });
-        
-        document.getElementById('mapButton').addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
-        });
-    </script>
 </body>
+<script>
+    
+    
+            var map_6a90640c4cc921b2b99060ce3f519d50 = L.map(
+                "map_6a90640c4cc921b2b99060ce3f519d50",
+                {
+                    center: [37.50816245665225, 126.99449127891674],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_c26706015142b25f9414a6ab1660dd07 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_c26706015142b25f9414a6ab1660dd07.addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var marker_7fa6649b43439a49de35d427eb775850 = L.marker(
+                [37.57205468137823, 127.052192199511],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_6ecaa01a9ad529c1d45815bb6240e161 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1f9add3ab2ed76ab69453cc36dd2dbb9 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_6109d3d10f5997faa52cd1a5e06a2e0c = $(`<div id="html_6109d3d10f5997faa52cd1a5e06a2e0c" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 래미안원베일리점 [선택됨]</h4>             <b>아파트:</b> 래미안원베일리<br>             <b>세대수:</b> 1997세대<br>             <b>거리:</b> 1.66km<br>             <b>매물수:</b> 12개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-6002-4536<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_1f9add3ab2ed76ab69453cc36dd2dbb9.setContent(html_6109d3d10f5997faa52cd1a5e06a2e0c);
+            
+        
+
+        marker_7fa6649b43439a49de35d427eb775850.bindPopup(popup_1f9add3ab2ed76ab69453cc36dd2dbb9)
+        ;
+
+        
+    
+    
+            marker_7fa6649b43439a49de35d427eb775850.bindTooltip(
+                `<div>
+                     래미안원베일리 - 행복부동산 래미안원베일리점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7fa6649b43439a49de35d427eb775850.setIcon(icon_6ecaa01a9ad529c1d45815bb6240e161);
+            
+    
+            var circle_e76f92cbf82aa25655a4e00946596061 = L.circle(
+                [37.57205468137823, 127.052192199511],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_2cad07826ff266e9545a79b823c2f61c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ddbdd6aa80b8dd7d4ae54060c8751ef8 = $(`<div id="html_ddbdd6aa80b8dd7d4ae54060c8751ef8" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 래미안원베일리점</div>`)[0];
+                popup_2cad07826ff266e9545a79b823c2f61c.setContent(html_ddbdd6aa80b8dd7d4ae54060c8751ef8);
+            
+        
+
+        circle_e76f92cbf82aa25655a4e00946596061.bindPopup(popup_2cad07826ff266e9545a79b823c2f61c)
+        ;
+
+        
+    
+    
+            var marker_5af149edd8a1902deeb6836c4f5de2d3 = L.marker(
+                [37.53473088446037, 126.944599444907],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_b3e84abab5a82576da858b5bbee3a2ab = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_48a85d0e6ac9807f9d38d4c29d7bc99c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c851ae69b125e2d20686ceba1a1d1c44 = $(`<div id="html_c851ae69b125e2d20686ceba1a1d1c44" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 래미안원베일리점 [선택됨]</h4>             <b>아파트:</b> 래미안원베일리<br>             <b>세대수:</b> 1697세대<br>             <b>거리:</b> 0.94km<br>             <b>매물수:</b> 18개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-7475-5974<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_48a85d0e6ac9807f9d38d4c29d7bc99c.setContent(html_c851ae69b125e2d20686ceba1a1d1c44);
+            
+        
+
+        marker_5af149edd8a1902deeb6836c4f5de2d3.bindPopup(popup_48a85d0e6ac9807f9d38d4c29d7bc99c)
+        ;
+
+        
+    
+    
+            marker_5af149edd8a1902deeb6836c4f5de2d3.bindTooltip(
+                `<div>
+                     래미안원베일리 - 미래공인중개사 래미안원베일리점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_5af149edd8a1902deeb6836c4f5de2d3.setIcon(icon_b3e84abab5a82576da858b5bbee3a2ab);
+            
+    
+            var circle_03f4c3358c345e53e41f4c0c366ac109 = L.circle(
+                [37.53473088446037, 126.944599444907],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_38ae42a3c2e78cb5bb400d8f0b3461f2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_675a692aae9c3c93daa44ad8572cd755 = $(`<div id="html_675a692aae9c3c93daa44ad8572cd755" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 래미안원베일리점</div>`)[0];
+                popup_38ae42a3c2e78cb5bb400d8f0b3461f2.setContent(html_675a692aae9c3c93daa44ad8572cd755);
+            
+        
+
+        circle_03f4c3358c345e53e41f4c0c366ac109.bindPopup(popup_38ae42a3c2e78cb5bb400d8f0b3461f2)
+        ;
+
+        
+    
+    
+            var marker_ba6f97c3980f9e92454bd6a4861e4819 = L.marker(
+                [37.49945761672171, 127.0628040695003],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_208b02af5a9d1abef80f4f5f05453e02 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_56f05561dcc15c11be86e5d926495790 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a8e4c20296b75509749e937b15c665d7 = $(`<div id="html_a8e4c20296b75509749e937b15c665d7" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>드림부동산 래미안원베일리점 [선택됨]</h4>             <b>아파트:</b> 래미안원베일리<br>             <b>세대수:</b> 1263세대<br>             <b>거리:</b> 0.34km<br>             <b>매물수:</b> 13개<br>             <b>매물구간:</b> 적극<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-2497-1168<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_56f05561dcc15c11be86e5d926495790.setContent(html_a8e4c20296b75509749e937b15c665d7);
+            
+        
+
+        marker_ba6f97c3980f9e92454bd6a4861e4819.bindPopup(popup_56f05561dcc15c11be86e5d926495790)
+        ;
+
+        
+    
+    
+            marker_ba6f97c3980f9e92454bd6a4861e4819.bindTooltip(
+                `<div>
+                     래미안원베일리 - 드림부동산 래미안원베일리점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ba6f97c3980f9e92454bd6a4861e4819.setIcon(icon_208b02af5a9d1abef80f4f5f05453e02);
+            
+    
+            var circle_3160d4a532f9ebe56b8d6eedcad862a4 = L.circle(
+                [37.49945761672171, 127.0628040695003],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_7d133ea2f509c36256d7a747c2488315 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_70db6d3a84fe2d71a911209a9023fc4a = $(`<div id="html_70db6d3a84fe2d71a911209a9023fc4a" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 드림부동산 래미안원베일리점</div>`)[0];
+                popup_7d133ea2f509c36256d7a747c2488315.setContent(html_70db6d3a84fe2d71a911209a9023fc4a);
+            
+        
+
+        circle_3160d4a532f9ebe56b8d6eedcad862a4.bindPopup(popup_7d133ea2f509c36256d7a747c2488315)
+        ;
+
+        
+    
+    
+            var marker_397eb45da84bf380a9d61a3f0020e90f = L.marker(
+                [37.58929217077245, 126.9281320976938],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_469680251d063a470eedd25b6a008700 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_40dde8a24bd11fbbcaf7ea7bf8264662 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_054f3076ab92dca3952ab58055a77174 = $(`<div id="html_054f3076ab92dca3952ab58055a77174" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 롯데캐슬골드파크점 [선택됨]</h4>             <b>아파트:</b> 롯데캐슬골드파크<br>             <b>세대수:</b> 1652세대<br>             <b>거리:</b> 0.82km<br>             <b>매물수:</b> 7개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-8245-1109<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_40dde8a24bd11fbbcaf7ea7bf8264662.setContent(html_054f3076ab92dca3952ab58055a77174);
+            
+        
+
+        marker_397eb45da84bf380a9d61a3f0020e90f.bindPopup(popup_40dde8a24bd11fbbcaf7ea7bf8264662)
+        ;
+
+        
+    
+    
+            marker_397eb45da84bf380a9d61a3f0020e90f.bindTooltip(
+                `<div>
+                     롯데캐슬골드파크 - 행복부동산 롯데캐슬골드파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_397eb45da84bf380a9d61a3f0020e90f.setIcon(icon_469680251d063a470eedd25b6a008700);
+            
+    
+            var circle_606193a14a6f042b32d0babcfa45c019 = L.circle(
+                [37.58929217077245, 126.9281320976938],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_0bf6c41fb28b370109a27279734be70f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_af893e3e1fc7241468a09b02e7cc921c = $(`<div id="html_af893e3e1fc7241468a09b02e7cc921c" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 롯데캐슬골드파크점</div>`)[0];
+                popup_0bf6c41fb28b370109a27279734be70f.setContent(html_af893e3e1fc7241468a09b02e7cc921c);
+            
+        
+
+        circle_606193a14a6f042b32d0babcfa45c019.bindPopup(popup_0bf6c41fb28b370109a27279734be70f)
+        ;
+
+        
+    
+    
+            var marker_44465c02aabf1896271fce8e8e2171f6 = L.marker(
+                [37.49190397945991, 126.9552536416349],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_15c606956db1279ffaf19053f8879747 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_12ecdf5ca4fa9291f13c9ff114a97637 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_bbada99b8637acee7832192c1eea7d06 = $(`<div id="html_bbada99b8637acee7832192c1eea7d06" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 롯데캐슬골드파크점 [선택됨]</h4>             <b>아파트:</b> 롯데캐슬골드파크<br>             <b>세대수:</b> 1270세대<br>             <b>거리:</b> 1.71km<br>             <b>매물수:</b> 14개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-5052-7163<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_12ecdf5ca4fa9291f13c9ff114a97637.setContent(html_bbada99b8637acee7832192c1eea7d06);
+            
+        
+
+        marker_44465c02aabf1896271fce8e8e2171f6.bindPopup(popup_12ecdf5ca4fa9291f13c9ff114a97637)
+        ;
+
+        
+    
+    
+            marker_44465c02aabf1896271fce8e8e2171f6.bindTooltip(
+                `<div>
+                     롯데캐슬골드파크 - 미래공인중개사 롯데캐슬골드파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_44465c02aabf1896271fce8e8e2171f6.setIcon(icon_15c606956db1279ffaf19053f8879747);
+            
+    
+            var circle_eb375d9f58fcefc5abadc30e02055967 = L.circle(
+                [37.49190397945991, 126.9552536416349],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_8144866df29994ffe7b5c22efa759a49 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9ac7fc881125d7aa5d56c9af310206f7 = $(`<div id="html_9ac7fc881125d7aa5d56c9af310206f7" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 롯데캐슬골드파크점</div>`)[0];
+                popup_8144866df29994ffe7b5c22efa759a49.setContent(html_9ac7fc881125d7aa5d56c9af310206f7);
+            
+        
+
+        circle_eb375d9f58fcefc5abadc30e02055967.bindPopup(popup_8144866df29994ffe7b5c22efa759a49)
+        ;
+
+        
+    
+    
+            var marker_730ed30f3c76559d37f14f672a2e296d = L.marker(
+                [37.51419846127967, 127.0697006023896],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_485939c9a6784c69b1e3a157522d7b4d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_77edf89759a2bbf5dc9615c310ba1393 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9267b4239a44a7a22ff57b77a036b9d3 = $(`<div id="html_9267b4239a44a7a22ff57b77a036b9d3" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>드림부동산 롯데캐슬골드파크점 [선택됨]</h4>             <b>아파트:</b> 롯데캐슬골드파크<br>             <b>세대수:</b> 1794세대<br>             <b>거리:</b> 1.54km<br>             <b>매물수:</b> 18개<br>             <b>매물구간:</b> 적극<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-3942-9210<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_77edf89759a2bbf5dc9615c310ba1393.setContent(html_9267b4239a44a7a22ff57b77a036b9d3);
+            
+        
+
+        marker_730ed30f3c76559d37f14f672a2e296d.bindPopup(popup_77edf89759a2bbf5dc9615c310ba1393)
+        ;
+
+        
+    
+    
+            marker_730ed30f3c76559d37f14f672a2e296d.bindTooltip(
+                `<div>
+                     롯데캐슬골드파크 - 드림부동산 롯데캐슬골드파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_730ed30f3c76559d37f14f672a2e296d.setIcon(icon_485939c9a6784c69b1e3a157522d7b4d);
+            
+    
+            var circle_cb306884ee98f33d54b0577a0eaaaa6c = L.circle(
+                [37.51419846127967, 127.0697006023896],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_5e533baa119d1baa78228ef400779b02 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_bb107dd566abb7da8229948481d9d11e = $(`<div id="html_bb107dd566abb7da8229948481d9d11e" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 드림부동산 롯데캐슬골드파크점</div>`)[0];
+                popup_5e533baa119d1baa78228ef400779b02.setContent(html_bb107dd566abb7da8229948481d9d11e);
+            
+        
+
+        circle_cb306884ee98f33d54b0577a0eaaaa6c.bindPopup(popup_5e533baa119d1baa78228ef400779b02)
+        ;
+
+        
+    
+    
+            var marker_acc3a7b65ee3bba9b29b4184f035884d = L.marker(
+                [37.48674694232093, 126.9288837565378],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_3d1938fc710a79c726d9785861dc9880 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_fa4ba7ebeb7417f5af14d97d949d4f77 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_cbbc79a0cc2c4b847024b3c58f9c4b76 = $(`<div id="html_cbbc79a0cc2c4b847024b3c58f9c4b76" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>골든부동산 롯데캐슬골드파크점 [선택됨]</h4>             <b>아파트:</b> 롯데캐슬골드파크<br>             <b>세대수:</b> 1414세대<br>             <b>거리:</b> 1.41km<br>             <b>매물수:</b> 7개<br>             <b>매물구간:</b> 보통<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-8020-5964<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_fa4ba7ebeb7417f5af14d97d949d4f77.setContent(html_cbbc79a0cc2c4b847024b3c58f9c4b76);
+            
+        
+
+        marker_acc3a7b65ee3bba9b29b4184f035884d.bindPopup(popup_fa4ba7ebeb7417f5af14d97d949d4f77)
+        ;
+
+        
+    
+    
+            marker_acc3a7b65ee3bba9b29b4184f035884d.bindTooltip(
+                `<div>
+                     롯데캐슬골드파크 - 골든부동산 롯데캐슬골드파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_acc3a7b65ee3bba9b29b4184f035884d.setIcon(icon_3d1938fc710a79c726d9785861dc9880);
+            
+    
+            var circle_0c3ebae26270781d0f85934288c99466 = L.circle(
+                [37.48674694232093, 126.9288837565378],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_66f3d1e2bef748e02ac4d7560541061f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_075b43a76754bbd45c56a97ac12b6f22 = $(`<div id="html_075b43a76754bbd45c56a97ac12b6f22" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 골든부동산 롯데캐슬골드파크점</div>`)[0];
+                popup_66f3d1e2bef748e02ac4d7560541061f.setContent(html_075b43a76754bbd45c56a97ac12b6f22);
+            
+        
+
+        circle_0c3ebae26270781d0f85934288c99466.bindPopup(popup_66f3d1e2bef748e02ac4d7560541061f)
+        ;
+
+        
+    
+    
+            var marker_daaa4754558fddd711866bf17d47c6d9 = L.marker(
+                [37.52417842062287, 126.9772090288292],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_352b07a3a7980039169f248153a6fe2f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_aec557837f644b9b6b6a363ed1a1a97e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_0b588eca667a6d06801f2af80df9b551 = $(`<div id="html_0b588eca667a6d06801f2af80df9b551" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 아크로리버파크점 [선택됨]</h4>             <b>아파트:</b> 아크로리버파크<br>             <b>세대수:</b> 1226세대<br>             <b>거리:</b> 1.88km<br>             <b>매물수:</b> 10개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-8258-9019<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_aec557837f644b9b6b6a363ed1a1a97e.setContent(html_0b588eca667a6d06801f2af80df9b551);
+            
+        
+
+        marker_daaa4754558fddd711866bf17d47c6d9.bindPopup(popup_aec557837f644b9b6b6a363ed1a1a97e)
+        ;
+
+        
+    
+    
+            marker_daaa4754558fddd711866bf17d47c6d9.bindTooltip(
+                `<div>
+                     아크로리버파크 - 행복부동산 아크로리버파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_daaa4754558fddd711866bf17d47c6d9.setIcon(icon_352b07a3a7980039169f248153a6fe2f);
+            
+    
+            var circle_d4f3aedbd7689ecc31fe68df1ecce67e = L.circle(
+                [37.52417842062287, 126.9772090288292],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_35de440dea6fde49e9fded2fe334b356 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4f9eb8be31c56ff443500cf434fc2dc9 = $(`<div id="html_4f9eb8be31c56ff443500cf434fc2dc9" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 아크로리버파크점</div>`)[0];
+                popup_35de440dea6fde49e9fded2fe334b356.setContent(html_4f9eb8be31c56ff443500cf434fc2dc9);
+            
+        
+
+        circle_d4f3aedbd7689ecc31fe68df1ecce67e.bindPopup(popup_35de440dea6fde49e9fded2fe334b356)
+        ;
+
+        
+    
+    
+            var marker_bf84756f44e11528f798fd90a176d15e = L.marker(
+                [37.4836517374223, 126.9868609344315],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_4ea03d6835436831f64051af58a6d5d4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cca92bc9ca9242429a675398a91141cb = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9140d12865d8c3c242c56a93fddcab70 = $(`<div id="html_9140d12865d8c3c242c56a93fddcab70" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 아크로리버파크점 [선택됨]</h4>             <b>아파트:</b> 아크로리버파크<br>             <b>세대수:</b> 1015세대<br>             <b>거리:</b> 0.25km<br>             <b>매물수:</b> 16개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-3510-5389<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_cca92bc9ca9242429a675398a91141cb.setContent(html_9140d12865d8c3c242c56a93fddcab70);
+            
+        
+
+        marker_bf84756f44e11528f798fd90a176d15e.bindPopup(popup_cca92bc9ca9242429a675398a91141cb)
+        ;
+
+        
+    
+    
+            marker_bf84756f44e11528f798fd90a176d15e.bindTooltip(
+                `<div>
+                     아크로리버파크 - 미래공인중개사 아크로리버파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_bf84756f44e11528f798fd90a176d15e.setIcon(icon_4ea03d6835436831f64051af58a6d5d4);
+            
+    
+            var circle_8611e0f9b176059fdbe43ae155839f8b = L.circle(
+                [37.4836517374223, 126.9868609344315],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_3321625070efc9972571ac9fa51673e7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ee5ac1a8fc397290c4e5701b064d0ac8 = $(`<div id="html_ee5ac1a8fc397290c4e5701b064d0ac8" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 아크로리버파크점</div>`)[0];
+                popup_3321625070efc9972571ac9fa51673e7.setContent(html_ee5ac1a8fc397290c4e5701b064d0ac8);
+            
+        
+
+        circle_8611e0f9b176059fdbe43ae155839f8b.bindPopup(popup_3321625070efc9972571ac9fa51673e7)
+        ;
+
+        
+    
+    
+            var marker_b03d40f6f606621d53f95c4592480123 = L.marker(
+                [37.45041078616515, 127.0816681904422],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_1d3cc6eab88640488e238ff5ad51910a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d6e7240b19e6d71ca5ccf83f68dca72e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_4ddaac90dfb4de0cdd6238ca4501334a = $(`<div id="html_4ddaac90dfb4de0cdd6238ca4501334a" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>드림부동산 아크로리버파크점 [선택됨]</h4>             <b>아파트:</b> 아크로리버파크<br>             <b>세대수:</b> 1630세대<br>             <b>거리:</b> 1.51km<br>             <b>매물수:</b> 10개<br>             <b>매물구간:</b> 적극<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-3660-7425<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_d6e7240b19e6d71ca5ccf83f68dca72e.setContent(html_4ddaac90dfb4de0cdd6238ca4501334a);
+            
+        
+
+        marker_b03d40f6f606621d53f95c4592480123.bindPopup(popup_d6e7240b19e6d71ca5ccf83f68dca72e)
+        ;
+
+        
+    
+    
+            marker_b03d40f6f606621d53f95c4592480123.bindTooltip(
+                `<div>
+                     아크로리버파크 - 드림부동산 아크로리버파크점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b03d40f6f606621d53f95c4592480123.setIcon(icon_1d3cc6eab88640488e238ff5ad51910a);
+            
+    
+            var circle_1bb77565c378072d27d10389dcff8ef3 = L.circle(
+                [37.45041078616515, 127.0816681904422],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_8f7f77903faaf4d84514e51c5b2f44f6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_dace542826bf2a5abb40894e93bbf636 = $(`<div id="html_dace542826bf2a5abb40894e93bbf636" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 드림부동산 아크로리버파크점</div>`)[0];
+                popup_8f7f77903faaf4d84514e51c5b2f44f6.setContent(html_dace542826bf2a5abb40894e93bbf636);
+            
+        
+
+        circle_1bb77565c378072d27d10389dcff8ef3.bindPopup(popup_8f7f77903faaf4d84514e51c5b2f44f6)
+        ;
+
+        
+    
+    
+            var marker_62388f11b8ab7ac7e41743cc09fde7a0 = L.marker(
+                [37.44419007513355, 126.9354384694003],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_c6e9e727d9d50ccc3316531ddeab38f3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e16b04fc83ec352b0f13d57b787e6f39 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_b3a82b77c655ea4912db9ebb36acff69 = $(`<div id="html_b3a82b77c655ea4912db9ebb36acff69" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 자이엘라점 [선택됨]</h4>             <b>아파트:</b> 자이엘라<br>             <b>세대수:</b> 1117세대<br>             <b>거리:</b> 0.43km<br>             <b>매물수:</b> 11개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-2180-9479<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_e16b04fc83ec352b0f13d57b787e6f39.setContent(html_b3a82b77c655ea4912db9ebb36acff69);
+            
+        
+
+        marker_62388f11b8ab7ac7e41743cc09fde7a0.bindPopup(popup_e16b04fc83ec352b0f13d57b787e6f39)
+        ;
+
+        
+    
+    
+            marker_62388f11b8ab7ac7e41743cc09fde7a0.bindTooltip(
+                `<div>
+                     자이엘라 - 행복부동산 자이엘라점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_62388f11b8ab7ac7e41743cc09fde7a0.setIcon(icon_c6e9e727d9d50ccc3316531ddeab38f3);
+            
+    
+            var circle_8a718cdcc829f72282b70078d65fe1fc = L.circle(
+                [37.44419007513355, 126.9354384694003],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_faab0721e83cd2e3a453e1a6865237e4 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b7ac66db0586139396f5e1d945bfcf5d = $(`<div id="html_b7ac66db0586139396f5e1d945bfcf5d" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 자이엘라점</div>`)[0];
+                popup_faab0721e83cd2e3a453e1a6865237e4.setContent(html_b7ac66db0586139396f5e1d945bfcf5d);
+            
+        
+
+        circle_8a718cdcc829f72282b70078d65fe1fc.bindPopup(popup_faab0721e83cd2e3a453e1a6865237e4)
+        ;
+
+        
+    
+    
+            var marker_eb720c29ff09507b51e4aa48325e41d4 = L.marker(
+                [37.41071829334959, 127.0005098752394],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_596bef5f8fdf82b89e838aff19862c8f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7870ef4779c14877830e3d0bc6485596 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_19ac13d07daabc3966fd8f6a352a3955 = $(`<div id="html_19ac13d07daabc3966fd8f6a352a3955" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 자이엘라점 [선택됨]</h4>             <b>아파트:</b> 자이엘라<br>             <b>세대수:</b> 1596세대<br>             <b>거리:</b> 1.80km<br>             <b>매물수:</b> 17개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-2310-1733<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_7870ef4779c14877830e3d0bc6485596.setContent(html_19ac13d07daabc3966fd8f6a352a3955);
+            
+        
+
+        marker_eb720c29ff09507b51e4aa48325e41d4.bindPopup(popup_7870ef4779c14877830e3d0bc6485596)
+        ;
+
+        
+    
+    
+            marker_eb720c29ff09507b51e4aa48325e41d4.bindTooltip(
+                `<div>
+                     자이엘라 - 미래공인중개사 자이엘라점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_eb720c29ff09507b51e4aa48325e41d4.setIcon(icon_596bef5f8fdf82b89e838aff19862c8f);
+            
+    
+            var circle_e34320bafc4b5a8e23f27cef06a9e82e = L.circle(
+                [37.41071829334959, 127.0005098752394],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_a49cd922741595e81a0fbde2bf01c2cb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4a1bb413bd314ff80f98638abef2f4a9 = $(`<div id="html_4a1bb413bd314ff80f98638abef2f4a9" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 자이엘라점</div>`)[0];
+                popup_a49cd922741595e81a0fbde2bf01c2cb.setContent(html_4a1bb413bd314ff80f98638abef2f4a9);
+            
+        
+
+        circle_e34320bafc4b5a8e23f27cef06a9e82e.bindPopup(popup_a49cd922741595e81a0fbde2bf01c2cb)
+        ;
+
+        
+    
+    
+            var marker_6e31f3cd3ff4e231a833da1ee37c3a5a = L.marker(
+                [37.53766327959249, 127.034274738008],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_ff792f627ba0bc74bae64376f6476aca = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a77c8b8f2745691d89df4e709d333274 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_d218c503301f0f7b76dde5af7fb1b800 = $(`<div id="html_d218c503301f0f7b76dde5af7fb1b800" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 푸르지오시티점 [선택됨]</h4>             <b>아파트:</b> 푸르지오시티<br>             <b>세대수:</b> 649세대<br>             <b>거리:</b> 0.47km<br>             <b>매물수:</b> 16개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-7565-4515<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_a77c8b8f2745691d89df4e709d333274.setContent(html_d218c503301f0f7b76dde5af7fb1b800);
+            
+        
+
+        marker_6e31f3cd3ff4e231a833da1ee37c3a5a.bindPopup(popup_a77c8b8f2745691d89df4e709d333274)
+        ;
+
+        
+    
+    
+            marker_6e31f3cd3ff4e231a833da1ee37c3a5a.bindTooltip(
+                `<div>
+                     푸르지오시티 - 행복부동산 푸르지오시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6e31f3cd3ff4e231a833da1ee37c3a5a.setIcon(icon_ff792f627ba0bc74bae64376f6476aca);
+            
+    
+            var circle_055722a935342e298cfcbbc5a82c6fab = L.circle(
+                [37.53766327959249, 127.034274738008],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_9a36ba52ba0ae0d77d1fd92fcac468fb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_38b09680656d1b8837222f62f9907f22 = $(`<div id="html_38b09680656d1b8837222f62f9907f22" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 푸르지오시티점</div>`)[0];
+                popup_9a36ba52ba0ae0d77d1fd92fcac468fb.setContent(html_38b09680656d1b8837222f62f9907f22);
+            
+        
+
+        circle_055722a935342e298cfcbbc5a82c6fab.bindPopup(popup_9a36ba52ba0ae0d77d1fd92fcac468fb)
+        ;
+
+        
+    
+    
+            var marker_efdc88a0df5868280dd5bc69cd44301b = L.marker(
+                [37.43569839091523, 127.0533770685248],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_2845e2884667e76c64baeac1efe3aace = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a8d8138438f4df68e0952c3771bfdde4 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_94bda2df44513d66d00c94c32aa999fe = $(`<div id="html_94bda2df44513d66d00c94c32aa999fe" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 푸르지오시티점 [선택됨]</h4>             <b>아파트:</b> 푸르지오시티<br>             <b>세대수:</b> 1739세대<br>             <b>거리:</b> 0.51km<br>             <b>매물수:</b> 5개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-5964-8931<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_a8d8138438f4df68e0952c3771bfdde4.setContent(html_94bda2df44513d66d00c94c32aa999fe);
+            
+        
+
+        marker_efdc88a0df5868280dd5bc69cd44301b.bindPopup(popup_a8d8138438f4df68e0952c3771bfdde4)
+        ;
+
+        
+    
+    
+            marker_efdc88a0df5868280dd5bc69cd44301b.bindTooltip(
+                `<div>
+                     푸르지오시티 - 미래공인중개사 푸르지오시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_efdc88a0df5868280dd5bc69cd44301b.setIcon(icon_2845e2884667e76c64baeac1efe3aace);
+            
+    
+            var circle_85b1235a64a2fd71d66bfd62f081cd28 = L.circle(
+                [37.43569839091523, 127.0533770685248],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_6f537961bb39b11f1eec28b145e28434 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ef6912e13adde644d6481846c6a6adc9 = $(`<div id="html_ef6912e13adde644d6481846c6a6adc9" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 푸르지오시티점</div>`)[0];
+                popup_6f537961bb39b11f1eec28b145e28434.setContent(html_ef6912e13adde644d6481846c6a6adc9);
+            
+        
+
+        circle_85b1235a64a2fd71d66bfd62f081cd28.bindPopup(popup_6f537961bb39b11f1eec28b145e28434)
+        ;
+
+        
+    
+    
+            var marker_beafc9ddf8eeee1273689b385bfaf0ff = L.marker(
+                [37.58089310943772, 126.9689109991482],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_6a2cebba2c74936c3121eb1f5c154c21 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_948abfa92a1347ad5ab3230284f9570a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_72d445014f93f02304987d6c55900650 = $(`<div id="html_72d445014f93f02304987d6c55900650" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>드림부동산 푸르지오시티점 [선택됨]</h4>             <b>아파트:</b> 푸르지오시티<br>             <b>세대수:</b> 1595세대<br>             <b>거리:</b> 1.40km<br>             <b>매물수:</b> 13개<br>             <b>매물구간:</b> 적극<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-2966-4669<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_948abfa92a1347ad5ab3230284f9570a.setContent(html_72d445014f93f02304987d6c55900650);
+            
+        
+
+        marker_beafc9ddf8eeee1273689b385bfaf0ff.bindPopup(popup_948abfa92a1347ad5ab3230284f9570a)
+        ;
+
+        
+    
+    
+            marker_beafc9ddf8eeee1273689b385bfaf0ff.bindTooltip(
+                `<div>
+                     푸르지오시티 - 드림부동산 푸르지오시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_beafc9ddf8eeee1273689b385bfaf0ff.setIcon(icon_6a2cebba2c74936c3121eb1f5c154c21);
+            
+    
+            var circle_6865dc6c96bc1bbc4abcad4ce232f90d = L.circle(
+                [37.58089310943772, 126.9689109991482],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_b851549e8a5655e684ca8b82da44d2e2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6f8268f47cbb75655cbb0e8ffbacc7dc = $(`<div id="html_6f8268f47cbb75655cbb0e8ffbacc7dc" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 드림부동산 푸르지오시티점</div>`)[0];
+                popup_b851549e8a5655e684ca8b82da44d2e2.setContent(html_6f8268f47cbb75655cbb0e8ffbacc7dc);
+            
+        
+
+        circle_6865dc6c96bc1bbc4abcad4ce232f90d.bindPopup(popup_b851549e8a5655e684ca8b82da44d2e2)
+        ;
+
+        
+    
+    
+            var marker_852248b95e6083d48f4a4ff29b4d5505 = L.marker(
+                [37.5094387803212, 127.0945087832223],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_b7ab1c19928a1d0e7295f92c9b980f79 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2a2c8e79bf0d0994e622e2608aab6998 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9968a47fe5decac4ba1abd6ab6582865 = $(`<div id="html_9968a47fe5decac4ba1abd6ab6582865" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>행복부동산 힐스테이트리버시티점 [선택됨]</h4>             <b>아파트:</b> 힐스테이트리버시티<br>             <b>세대수:</b> 769세대<br>             <b>거리:</b> 0.89km<br>             <b>매물수:</b> 9개<br>             <b>매물구간:</b> 절박<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-3129-1835<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_2a2c8e79bf0d0994e622e2608aab6998.setContent(html_9968a47fe5decac4ba1abd6ab6582865);
+            
+        
+
+        marker_852248b95e6083d48f4a4ff29b4d5505.bindPopup(popup_2a2c8e79bf0d0994e622e2608aab6998)
+        ;
+
+        
+    
+    
+            marker_852248b95e6083d48f4a4ff29b4d5505.bindTooltip(
+                `<div>
+                     힐스테이트리버시티 - 행복부동산 힐스테이트리버시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_852248b95e6083d48f4a4ff29b4d5505.setIcon(icon_b7ab1c19928a1d0e7295f92c9b980f79);
+            
+    
+            var circle_e67ab9d568e349d3750cfaf5b7c94067 = L.circle(
+                [37.5094387803212, 127.0945087832223],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_9af52ca16dd07d070df6d0e979a3ed3b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fdd5fadea98a7cbbbe589f395ee9a12b = $(`<div id="html_fdd5fadea98a7cbbbe589f395ee9a12b" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 행복부동산 힐스테이트리버시티점</div>`)[0];
+                popup_9af52ca16dd07d070df6d0e979a3ed3b.setContent(html_fdd5fadea98a7cbbbe589f395ee9a12b);
+            
+        
+
+        circle_e67ab9d568e349d3750cfaf5b7c94067.bindPopup(popup_9af52ca16dd07d070df6d0e979a3ed3b)
+        ;
+
+        
+    
+    
+            var marker_fd7241bbd33ad1e7bfbf75e5305749f5 = L.marker(
+                [37.55087112937685, 126.9186043327903],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_a5cdf1ead608f549c13080d95b199b77 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2076750a8887ad2f92b6b7948f259963 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_8e0f34b815f9d4d80ad7d3ff17cc1f67 = $(`<div id="html_8e0f34b815f9d4d80ad7d3ff17cc1f67" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>미래공인중개사 힐스테이트리버시티점 [선택됨]</h4>             <b>아파트:</b> 힐스테이트리버시티<br>             <b>세대수:</b> 931세대<br>             <b>거리:</b> 0.27km<br>             <b>매물수:</b> 1개<br>             <b>매물구간:</b> 개척<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-8207-3248<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_2076750a8887ad2f92b6b7948f259963.setContent(html_8e0f34b815f9d4d80ad7d3ff17cc1f67);
+            
+        
+
+        marker_fd7241bbd33ad1e7bfbf75e5305749f5.bindPopup(popup_2076750a8887ad2f92b6b7948f259963)
+        ;
+
+        
+    
+    
+            marker_fd7241bbd33ad1e7bfbf75e5305749f5.bindTooltip(
+                `<div>
+                     힐스테이트리버시티 - 미래공인중개사 힐스테이트리버시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_fd7241bbd33ad1e7bfbf75e5305749f5.setIcon(icon_a5cdf1ead608f549c13080d95b199b77);
+            
+    
+            var circle_2552fc80f48c7c069144603011c94169 = L.circle(
+                [37.55087112937685, 126.9186043327903],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_cd20d82927aab6aea2c733c048572924 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c78f2d1910f8f321929fa5257a43575b = $(`<div id="html_c78f2d1910f8f321929fa5257a43575b" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 미래공인중개사 힐스테이트리버시티점</div>`)[0];
+                popup_cd20d82927aab6aea2c733c048572924.setContent(html_c78f2d1910f8f321929fa5257a43575b);
+            
+        
+
+        circle_2552fc80f48c7c069144603011c94169.bindPopup(popup_cd20d82927aab6aea2c733c048572924)
+        ;
+
+        
+    
+    
+            var marker_a861a64eb6464c77bbc1684730121697 = L.marker(
+                [37.5308254810103, 126.907914788291],
+                {
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var icon_c830f99cae7d398f4e83a7fbcaaea001 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_95cec59e12282680119606ffbcb66552 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_84066056cf350a4bb899e4be167fe050 = $(`<div id="html_84066056cf350a4bb899e4be167fe050" style="width: 100.0%; height: 100.0%;">         <div style="width:300px">             <h4>드림부동산 힐스테이트리버시티점 [선택됨]</h4>             <b>아파트:</b> 힐스테이트리버시티<br>             <b>세대수:</b> 734세대<br>             <b>거리:</b> 1.75km<br>             <b>매물수:</b> 1개<br>             <b>매물구간:</b> 적극<br>             <b>영업의지:</b> 0<br>             <b>클러스터:</b> 없음<br>             <b>조정여부:</b> <br>             <b>실제순위:</b> 1<br>             <b>전화번호:</b> 02-6296-8333<br>             <b>유형:</b> 선택됨<br>                      </div>         </div>`)[0];
+                popup_95cec59e12282680119606ffbcb66552.setContent(html_84066056cf350a4bb899e4be167fe050);
+            
+        
+
+        marker_a861a64eb6464c77bbc1684730121697.bindPopup(popup_95cec59e12282680119606ffbcb66552)
+        ;
+
+        
+    
+    
+            marker_a861a64eb6464c77bbc1684730121697.bindTooltip(
+                `<div>
+                     힐스테이트리버시티 - 드림부동산 힐스테이트리버시티점
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a861a64eb6464c77bbc1684730121697.setIcon(icon_c830f99cae7d398f4e83a7fbcaaea001);
+            
+    
+            var circle_9826dcd62c53784328b6694826738927 = L.circle(
+                [37.5308254810103, 126.907914788291],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500.0, "stroke": true, "weight": 1}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+        var popup_8689f5dc1949b60d4ad5e15044489e61 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_470e6733354418f8402e07972d9e93f1 = $(`<div id="html_470e6733354418f8402e07972d9e93f1" style="width: 100.0%; height: 100.0%;">0.5km 클러스터 반경 - 드림부동산 힐스테이트리버시티점</div>`)[0];
+                popup_8689f5dc1949b60d4ad5e15044489e61.setContent(html_470e6733354418f8402e07972d9e93f1);
+            
+        
+
+        circle_9826dcd62c53784328b6694826738927.bindPopup(popup_8689f5dc1949b60d4ad5e15044489e61)
+        ;
+
+        
+    
+    
+            var tile_layer_c45cd73fbe82234f0d47dc70ef60686c = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detect_retina": false, "max_native_zoom": 19, "max_zoom": 19, "min_zoom": 0, "no_wrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+            var mini_map_af1e4585f7b13f9afbbaebf6d7201ba1 = new L.Control.MiniMap(
+                tile_layer_c45cd73fbe82234f0d47dc70ef60686c,
+                {
+  "position": "bottomright",
+  "width": 150,
+  "height": 150,
+  "collapsedWidth": 25,
+  "collapsedHeight": 25,
+  "zoomLevelOffset": -5,
+  "centerFixed": false,
+  "zoomAnimation": false,
+  "toggleDisplay": false,
+  "autoToggleDisplay": false,
+  "minimized": false,
+}
+            );
+            map_6a90640c4cc921b2b99060ce3f519d50.addControl(mini_map_af1e4585f7b13f9afbbaebf6d7201ba1);
+        
+    
+            L.control.fullscreen(
+                {
+  "position": "topleft",
+  "title": "Full Screen",
+  "titleCancel": "Exit Full Screen",
+  "forceSeparateButton": false,
+}
+            ).addTo(map_6a90640c4cc921b2b99060ce3f519d50);
+        
+    
+            var measure_control_db7517ded0bb12bd19bea61003c00e70 = new L.Control.Measure(
+                {
+  "position": "topright",
+  "primaryLengthUnit": "meters",
+  "secondaryLengthUnit": "miles",
+  "primaryAreaUnit": "sqmeters",
+  "secondaryAreaUnit": "acres",
+});
+            map_6a90640c4cc921b2b99060ce3f519d50.addControl(measure_control_db7517ded0bb12bd19bea61003c00e70);
+
+            // Workaround for using this plugin with Leaflet>=1.8.0
+            // https://github.com/ljagis/leaflet-measure/issues/171
+            L.Control.Measure.include({
+                _setCaptureMarkerIcon: function () {
+                    // disable autopan
+                    this._captureMarker.options.autoPanOnFocus = false;
+                    // default function
+                    this._captureMarker.setIcon(
+                        L.divIcon({
+                            iconSize: this._map.getSize().multiplyBy(2)
+                        })
+                    );
+                },
+            });
+
+        
+</script>
 </html>
