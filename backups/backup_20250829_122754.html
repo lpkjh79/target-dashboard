@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아파트별 타겟 사무소 목록</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .summary {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 25px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-box input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            padding: 5px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #764ba2;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .apartment-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .apartment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .apartment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .apartment-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .apartment-id {
+            font-size: 12px;
+            color: #999;
+            background: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .office-list {
+            margin-top: 10px;
+        }
+        
+        .office-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .office-item.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .office-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .office-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .primary-badge {
+            background: gold;
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-left: 10px;
+        }
+        
+        .office-details {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .office-item.primary .office-details {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .office-link {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 5px 12px;
+            background: #03c75a;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        
+        .office-link:hover {
+            background: #02a048;
+        }
+        
+        .segment-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        
+        .segment-절박 { background: #ffebee; color: #c62828; }
+        .segment-개척 { background: #fff3e0; color: #e65100; }
+        .segment-적극 { background: #e8f5e9; color: #2e7d32; }
+        .segment-보통 { background: #e3f2fd; color: #1565c0; }
+        .segment-안정 { background: #f3e5f5; color: #6a1b9a; }
+        .segment-포화 { background: #eceff1; color: #455a64; }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #764ba2;
+            border-radius: 20px;
+            color: #764ba2;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .filter-btn.active {
+            background: #764ba2;
+            color: white;
+        }
+        
+        .filter-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 아파트별 타겟 사무소</h1>
+        <div class="summary">
+            2025년 08월 29일 기준 | 총 1개 단지, 42개 사무소
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="아파트명 또는 사무소명 검색..." onkeyup="searchApartments()">
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">1</div>
+                <div class="stat-label">총 아파트</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">42</div>
+                <div class="stat-label">총 사무소</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">1순위 선정</div>
+            </div>
+        </div>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterBySegment('all')">전체</button>
+            <button class="filter-btn" onclick="filterBySegment('절박')">절박</button>
+            <button class="filter-btn" onclick="filterBySegment('개척')">개척</button>
+            <button class="filter-btn" onclick="filterBySegment('적극')">적극</button>
+            <button class="filter-btn" onclick="filterBySegment('보통')">보통</button>
+            <button class="filter-btn" onclick="filterBySegment('안정')">안정</button>
+            <button class="filter-btn" onclick="filterBySegment('포화')">포화</button>
+        </div>
+        
+        <div id="apartmentList">
+
+            <div class="apartment-card" data-name="알 수 없음">
+                <div class="apartment-header">
+                    <div>
+                        <span class="apartment-name">알 수 없음</span>
+                        
+                    </div>
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <span style="color: #03c75a; font-size: 20px;">🏠</span>
+                    </a>
+                </div>
+                
+                <div class="office-list">
+
+                    <div class="office-item" data-segment="포화">
+                        <div class="office-name">
+                            덕신대우부동산중개사무소
+                            
+                            <span class="segment-포화 segment-tag">포화</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-8356-6570<br>
+                            🏘️ 매물 204개<br>
+                            📍 울산시 울주군 온산읍 덕신리 1360-4 1층
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="포화">
+                        <div class="office-name">
+                            김현호부동산공인중개사사무소
+                            
+                            <span class="segment-포화 segment-tag">포화</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-5567-1379<br>
+                            🏘️ 매물 177개<br>
+                            📍 울산시 중구 우정동 529 S229호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="포화">
+                        <div class="office-name">
+                            은성공인중개사사무소
+                            
+                            <span class="segment-포화 segment-tag">포화</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-4889-1999<br>
+                            🏘️ 매물 75개<br>
+                            📍 울산시 북구 연암동 370 엘지진로아파트 상가동 105호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="안정">
+                        <div class="office-name">
+                            선경부동산중개사무소
+                            
+                            <span class="segment-안정 segment-tag">안정</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-2125-0647<br>
+                            🏘️ 매물 57개<br>
+                            📍 울산시 남구 삼산동 1461-1 상가동 1층 1호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            태화송부동산중개사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-2814-5842<br>
+                            🏘️ 매물 49개<br>
+                            📍 울산시 남구 달동 1341-1 3층
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            서한이다음공인중개사사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-9630-4791<br>
+                            🏘️ 매물 48개<br>
+                            📍 울산시 중구 복산동 779 번영로 서한 이다음 1단지 401동(상가동) 103호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            더샵정직한부동산중개사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-2479-0533<br>
+                            🏘️ 매물 45개<br>
+                            📍 울산시 남구 야음동 942 시티프라디움 근생3동 106호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            좋은집부동산중개사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-2453-2300<br>
+                            🏘️ 매물 44개<br>
+                            📍 울산시 남구 신정동 318 울산신정푸르지오 502동 101호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            약사백곰부동산중개사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-4488-5971<br>
+                            🏘️ 매물 43개<br>
+                            📍 울산시 중구 약사동 1101 상가동 109호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            미나리부동산공인중개사사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 052-911-7177<br>
+                            🏘️ 매물 40개<br>
+                            📍 울산광역시 북구 산하동 977-14 블루마시티 효성해링턴 플레이스 1단지 상가동 118호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            스마트공인중개사사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-5500-4938<br>
+                            🏘️ 매물 39개<br>
+                            📍 울산시 동구 전하동 301-45 102호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            문수동원APT부동산중개사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-9692-8888<br>
+                            🏘️ 매물 39개<br>
+                            📍 울산시 남구 무거동 1184-1 문수동원비스타 상가 201동 105호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            자이탑부동산공인중개사사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-7728-4252<br>
+                            🏘️ 매물 36개<br>
+                            📍 울산광역시 동구 서부동 1055 신영울산지웰시티자이2단지 1동 B205호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            라엘에스스마일부동산중개사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-9275-9570<br>
+                            🏘️ 매물 36개<br>
+                            📍 울산시 남구 신정동 800-4 1층
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            드론부동산공인중개사사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-5789-6857<br>
+                            🏘️ 매물 35개<br>
+                            📍 울산광역시 북구 송정동 1232-1 108호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            친절한공인중개사사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 052-252-9312<br>
+                            🏘️ 매물 34개<br>
+                            📍 울산시 동구 동부동 327-8
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="보통">
+                        <div class="office-name">
+                            에뜰정원공인중개사사무소
+                            
+                            <span class="segment-보통 segment-tag">보통</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-6777-6559<br>
+                            🏘️ 매물 32개<br>
+                            📍 울산광역시 울주군 청량읍 덕하리 645 상가동 108호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            오션공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-8692-1103<br>
+                            🏘️ 매물 27개<br>
+                            📍 울산시 동구 방어동 1135-3 1층
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            스카이부동산중개
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-4590-2426<br>
+                            🏘️ 매물 26개<br>
+                            📍 울산시 중구 반구동 570-1
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            줌파크부동산공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-8580-3562<br>
+                            🏘️ 매물 26개<br>
+                            📍 울산시 북구 중산동 1277-1 오토밸리로Zoom파크 근린생활시설동 104호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            다운동아메가부동산중개
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-5525-0274<br>
+                            🏘️ 매물 25개<br>
+                            📍 울산광역시 중구 다운동 702 다운 동아 큰마을아파트 상가동 101호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            영남알프스부동산공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-6630-0069<br>
+                            🏘️ 매물 23개<br>
+                            📍 울산광역시 울주군 삼남읍 교동리 1678 영남알프스타운아파트 125동 101호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            솔루션공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-6609-4043<br>
+                            🏘️ 매물 23개<br>
+                            📍 울산광역시 북구 매곡동 572 현대파크맨션 111동 102호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            삼산탑부동산중개사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-5446-4593<br>
+                            🏘️ 매물 22개<br>
+                            📍 울산광역시 남구 삼산동 182-1 아데라움아파트 109동 101호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            에뜰정원부동산중개사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-9212-2740<br>
+                            🏘️ 매물 22개<br>
+                            📍 울산시 울주군 청량읍 덕하리 645 뉴시티에일린의뜰1차 상가동 108호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            시향공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-4757-3925<br>
+                            🏘️ 매물 21개<br>
+                            📍 울산시 동구 화정동 851-6 대하크리스탈 상가동 101호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            꿈에부동산중개사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-5771-1107<br>
+                            🏘️ 매물 20개<br>
+                            📍 울산시 중구 태화동 449-1 102호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            대경복덕방부동산공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-4019-9800<br>
+                            🏘️ 매물 18개<br>
+                            📍 울산광역시 중구 장현동 173-3 1층
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            금아드림팰리스공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-3037-8924<br>
+                            🏘️ 매물 16개<br>
+                            📍 울산시 울주군 삼남읍 신화리 1609 금아드림팰리스 상가 201동 114호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            한양립스공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-4431-2660<br>
+                            🏘️ 매물 15개<br>
+                            📍 울산시 중구 우정동 271-28 101호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            신세계부동산공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-6658-6379<br>
+                            🏘️ 매물 15개<br>
+                            📍 울산시 북구 매곡동 233 상가동 106호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            메르디앙공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-3580-0282<br>
+                            🏘️ 매물 14개<br>
+                            📍 울산시 울주군 범서읍 굴화리 36-9 1층
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            한양립스부동산중개사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-2827-3002<br>
+                            🏘️ 매물 14개<br>
+                            📍 울산광역시 울주군 온양읍 발리 523-1 1동 101호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            율리공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-3506-1276<br>
+                            🏘️ 매물 14개<br>
+                            📍 울산시 울주군 청량읍 율리 1472-1 문수데시앙1단지 상가동 203호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            문수산더샵공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-9583-5815<br>
+                            🏘️ 매물 13개<br>
+                            📍 울산시 울주군 범서읍 굴화리 752-3 1층 103호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            친절한부동산중개사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 052-245-1141<br>
+                            🏘️ 매물 12개<br>
+                            📍 울산시 중구 복산동 460-72 5단지 1상가 105호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            천금공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-9699-0719<br>
+                            🏘️ 매물 11개<br>
+                            📍 울산광역시 울주군 범서읍 구영리 208 풍경채 상가동 101호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="적극">
+                        <div class="office-name">
+                            행복공인중개사사무소
+                            
+                            <span class="segment-적극 segment-tag">적극</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-7501-5539<br>
+                            🏘️ 매물 11개<br>
+                            📍 울산광역시 울주군 온양읍 대안리 750 일동미라주더스타 111동 108호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="개척">
+                        <div class="office-name">
+                            부국부동산공인중개사사무소
+                            
+                            <span class="segment-개척 segment-tag">개척</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-5649-6801<br>
+                            🏘️ 매물 10개<br>
+                            📍 울산시 북구 명촌동 697-15 울산강변효성해링턴플레이스 근린생활시설-2동 121호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="개척">
+                        <div class="office-name">
+                            뉴체크부동산중개사무소
+                            
+                            <span class="segment-개척 segment-tag">개척</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-9488-0768<br>
+                            🏘️ 매물 5개<br>
+                            📍 울산시 남구 신정동 1640-6 1동 1층 B1-105호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="개척">
+                        <div class="office-name">
+                            한아름부동산중개사무소
+                            
+                            <span class="segment-개척 segment-tag">개척</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-8959-0962<br>
+                            🏘️ 매물 4개<br>
+                            📍 울산시 남구 야음동 881 롯데캐슬2단지아파트 일반상가 103호
+                        </div>
+                        
+                    </div>
+
+                    <div class="office-item" data-segment="절박">
+                        <div class="office-name">
+                            프런티어공인중개사사무소
+                            
+                            <span class="segment-절박 segment-tag">절박</span>
+                        </div>
+                        <div class="office-details">
+                            📞 010-5715-6673<br>
+                            🏘️ 매물 3개<br>
+                            📍 울산광역시 동구 방어동 58-2 대왕암CGV블루스퀘어 112호
+                        </div>
+                        
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="footer">
+            © 2024 부동산 타겟 분석 시스템 | Powered by Target Analyzer
+        </div>
+    </div>
+    
+    <script>
+        function searchApartments() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.getElementsByClassName('apartment-card');
+            
+            for (let card of cards) {
+                const name = card.getAttribute('data-name');
+                const offices = card.getElementsByClassName('office-item');
+                let hasMatch = name.includes(input);
+                
+                if (!hasMatch) {
+                    for (let office of offices) {
+                        if (office.textContent.toLowerCase().includes(input)) {
+                            hasMatch = true;
+                            break;
+                        }
+                    }
+                }
+                
+                card.style.display = hasMatch ? 'block' : 'none';
+            }
+        }
+        
+        function filterBySegment(segment) {
+            const cards = document.getElementsByClassName('apartment-card');
+            const buttons = document.getElementsByClassName('filter-btn');
+            
+            // 버튼 활성화 상태 변경
+            for (let btn of buttons) {
+                btn.classList.remove('active');
+                if (btn.textContent === segment || (segment === 'all' && btn.textContent === '전체')) {
+                    btn.classList.add('active');
+                }
+            }
+            
+            // 카드 필터링
+            for (let card of cards) {
+                if (segment === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const offices = card.getElementsByClassName('office-item');
+                    let hasSegment = false;
+                    
+                    for (let office of offices) {
+                        if (office.getAttribute('data-segment') === segment) {
+                            hasSegment = true;
+                            break;
+                        }
+                    }
+                    
+                    card.style.display = hasSegment ? 'block' : 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
